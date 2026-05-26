@@ -225,16 +225,16 @@
       <div class="result-stats__title">打印统计</div>
       <div class="result-stats__grid">
         <div class="result-stat">
-          <div class="result-stat__num">37</div>
+          <div class="result-stat__num">37<span style="font-size:18px;font-weight:400">张</span></div>
           <div class="result-stat__label">总试卷数</div>
         </div>
         <div class="result-stat">
-          <div class="result-stat__num">33</div>
+          <div class="result-stat__num">33<span style="font-size:18px;font-weight:400">张</span></div>
           <div class="result-stat__label">本次续打</div>
         </div>
         <div class="result-stat">
           <div class="result-stat__num">1</div>
-          <div class="result-stat__label">卡纸次数</div>
+          <div class="result-stat__label">卡纸张数</div>
         </div>
         <div class="result-stat">
           <div class="result-stat__num">2</div>
@@ -243,26 +243,6 @@
       </div>
     </div>
 
-    <!-- 任务记录 -->
-    <div class="task-list">
-      <div class="task-list__title">打印记录</div>
-      <div class="task-item">
-        <div class="task-item__icon">🖨️</div>
-        <div class="task-item__info">
-          <div class="task-item__name">第一次打印</div>
-          <div class="task-item__meta">第1-4张 · 林晓雨、陈宇轩、王思琪、张浩然</div>
-        </div>
-        <div class="task-item__status task-item__status--done">完成</div>
-      </div>
-      <div class="task-item">
-        <div class="task-item__icon">🖨️</div>
-        <div class="task-item__info">
-          <div class="task-item__name">续打任务</div>
-          <div class="task-item__meta">第5-37张 · 李欣怡等33人</div>
-        </div>
-        <div class="task-item__status task-item__status--done">完成</div>
-      </div>
-    </div>
   </div>
 
   <!-- 提前结束状态（默认隐藏） -->
@@ -282,31 +262,13 @@
       </div>
     </div>
 
-    <!-- 打印记录 -->
-    <div class="task-list">
-      <div class="task-list__title">打印记录</div>
-      <div class="task-item">
-        <div class="task-item__icon">🖨️</div>
-        <div class="task-item__info">
-          <div class="task-item__name">第一次打印</div>
-          <div class="task-item__meta">第1-4张 · 林晓雨、陈宇轩、王思琪、张浩然</div>
-        </div>
-        <div class="task-item__status task-item__status--done">完成</div>
-      </div>
-      <div class="task-item">
-        <div class="task-item__icon task-item__icon--pending">⏸️</div>
-        <div class="task-item__info">
-          <div class="task-item__name">续打任务</div>
-          <div class="task-item__meta">未开始 · 第5-37张待打印</div>
-        </div>
-        <div class="task-item__status task-item__status--pending">未开始</div>
-      </div>
-    </div>
+    <!-- 无打印记录 -->
   </div>
 
   <!-- 底部操作 -->
-  <div class="bottom-actions">
-    <button class="btn btn--primary" onclick="goHome()">返回首页</button>
+  <div class="bottom-actions bottom-actions--split">
+    <button class="btn btn--secondary" onclick="goHome()">返回首页</button>
+    <button class="btn btn--primary" onclick="goReport()">查看作业讲评</button>
   </div>
 </div>
 
@@ -320,6 +282,10 @@ if (params.get('type') === 'end') {
 
 function goHome() {
   alert('返回首页');
+}
+
+function goReport() {
+  alert('查看作业讲评');
 }
 </script>
 
