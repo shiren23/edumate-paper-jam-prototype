@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>卡纸提示</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+.paper-jam-icon {
+  width: 160px;
+  height: 160px;
+  margin: 32px auto 24px;
+  background: var(--primary-fade);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 72px;
+}
+
+.paper-jam-title {
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--text-primary);
+}
+
+.paper-jam-desc {
+  font-size: 15px;
+  color: var(--text-secondary);
+  text-align: center;
+  margin-top: 12px;
+  line-height: 1.7;
+  padding: 0 32px;
+}
+
+.paper-jam-steps {
+  margin: 32px 16px 0;
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.paper-jam-steps__title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.paper-jam-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.paper-jam-step:last-child { margin-bottom: 0; }
+
+.paper-jam-step__num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.paper-jam-step__text {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  padding-top: 2px;
+}
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <!-- 顶部状态栏 -->
+  <div class="status-bar">
+    <span>16:08</span>
+    <span>📶 5G 🔋</span>
+  </div>
+
+  <!-- App Bar -->
+  <header class="app-bar">
+    <button class="app-bar__back">←</button>
+    <h1 class="app-bar__title">留痕打印</h1>
+    <div class="app-bar__actions">
+      <button class="app-bar__more">⋮</button>
+    </div>
+  </header>
+
+  <!-- 步骤条 -->
+  <div class="step-bar">
+    <div class="step step--completed">
+      <div class="step__circle">✓</div>
+      <span class="step__label">试卷扫描</span>
+    </div>
+    <div class="step step--completed">
+      <div class="step__circle">✓</div>
+      <span class="step__label">AI 批阅</span>
+    </div>
+    <div class="step step--completed">
+      <div class="step__circle">✓</div>
+      <span class="step__label">批阅结果</span>
+    </div>
+    <div class="step step--current">
+      <div class="step__circle">!</div>
+      <span class="step__label">留痕打印</span>
+    </div>
+  </div>
+
+  <!-- 危险提示横幅 -->
+  <div class="px-4 mt-4">
+    <div class="banner banner--danger">
+      <span class="banner__icon">⚠️</span>
+      <div>
+        <div class="banner__text font-semibold">打印机卡纸，打印任务已中断</div>
+        <div class="banner__text mt-2">请按照以下步骤清理卡纸，清理完成后点击底部按钮继续。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 卡纸图标 -->
+  <div class="paper-jam-icon">🖨️</div>
+
+  <!-- 提示文字 -->
+  <div class="paper-jam-title">打印机卡纸</div>
+  <div class="paper-jam-desc">
+    请打开打印机前盖，小心取出卡住的纸张，确认纸盒内纸张摆放正确后关闭前盖。
+  </div>
+
+  <!-- 清理步骤 -->
+  <div class="paper-jam-steps">
+    <div class="paper-jam-steps__title">清理步骤</div>
+    <div class="paper-jam-step">
+      <div class="paper-jam-step__num">1</div>
+      <div class="paper-jam-step__text">打开打印机前盖，等待硒鼓冷却</div>
+    </div>
+    <div class="paper-jam-step">
+      <div class="paper-jam-step__num">2</div>
+      <div class="paper-jam-step__text">轻轻拉出卡住的纸张，注意不要撕裂</div>
+    </div>
+    <div class="paper-jam-step">
+      <div class="paper-jam-step__num">3</div>
+      <div class="paper-jam-step__text">检查纸盒，确保纸张平整、数量适当</div>
+    </div>
+    <div class="paper-jam-step">
+      <div class="paper-jam-step__num">4</div>
+      <div class="paper-jam-step__text">关闭前盖，确认打印机恢复正常状态</div>
+    </div>
+  </div>
+
+  <!-- 底部操作 -->
+  <div class="bottom-actions">
+    <button class="btn btn--primary" onclick="showContinueDialog()">我已清理卡纸，继续打印</button>
+  </div>
+
+  <!-- 弹窗：是否打印后续试卷 -->
+  <div id="continueDialog" class="dialog-overlay" style="display:none;">
+    <div class="dialog">
+      <div class="dialog__content">
+        <div class="dialog__icon dialog__icon--warning">🖨️</div>
+        <div class="dialog__title">是否打印后续试卷？</div>
+        <div class="dialog__desc">检测到有部分试卷尚未完成留痕打印，是否继续打印剩余试卷？</div>
+      </div>
+      <div class="dialog__actions">
+        <button class="dialog__btn dialog__btn--cancel" onclick="hideDialog()">否，结束打印</button>
+        <button class="dialog__btn dialog__btn--confirm" onclick="goToRematch()">是，进入匹配</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 弹窗：结束打印确认 -->
+  <div id="endDialog" class="dialog-overlay" style="display:none;">
+    <div class="dialog">
+      <div class="dialog__content">
+        <div class="dialog__icon dialog__icon--success">✓</div>
+        <div class="dialog__title">打印任务已结束</div>
+        <div class="dialog__desc">请将纸盒中剩余的试卷全部取出，避免影响下一位老师使用。</div>
+      </div>
+      <div class="dialog__actions">
+        <button class="dialog__btn dialog__btn--single" onclick="hideDialog()">我知道了</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showContinueDialog() {
+  document.getElementById('continueDialog').style.display = 'flex';
+}
+function hideDialog() {
+  document.getElementById('continueDialog').style.display = 'none';
+  document.getElementById('endDialog').style.display = 'none';
+}
+function goToRematch() {
+  window.location.href = 'rematch.html';
+}
+</script>
+
+</body>
+</html>

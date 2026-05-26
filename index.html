@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>卡纸兜底 UI 预览</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+  background: #1a1a2e;
+  min-height: 100vh;
+  padding: 40px 20px;
+  color: white;
+}
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+.header h1 {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+.header p {
+  font-size: 14px;
+  color: #8892b0;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.card {
+  background: #16213e;
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid #233554;
+  transition: transform 0.2s, border-color 0.2s;
+}
+.card:hover {
+  transform: translateY(-4px);
+  border-color: #6366F1;
+}
+.card__icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: #6366F1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin-bottom: 16px;
+}
+.card__title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.card__desc {
+  font-size: 14px;
+  color: #8892b0;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+.card__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: #6366F1;
+  color: white;
+  text-decoration: none;
+  border-radius: 9999px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+.card__link:hover {
+  background: #4F46E5;
+}
+.flow-info {
+  max-width: 1200px;
+  margin: 40px auto 0;
+  background: #16213e;
+  border-radius: 16px;
+  padding: 24px;
+  border: 1px solid #233554;
+}
+.flow-info h2 {
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+.flow-info ol {
+  padding-left: 20px;
+  color: #8892b0;
+  line-height: 2;
+}
+.flow-info li strong {
+  color: white;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🖨️ 卡纸兜底 UI 预览</h1>
+  <p>点击下方卡片预览各关键页面 · 建议使用手机模式或 375px 宽度查看</p>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <div class="card__icon">⚠️</div>
+    <div class="card__title">1. 卡纸提示页面</div>
+    <div class="card__desc">打印机卡纸后展示给教师的提示页面，包含步骤条、错误横幅、清理步骤说明和"我已清理"按钮。</div>
+    <a class="card__link" href="paper-jam.html" target="_blank">打开预览 →</a>
+  </div>
+
+  <div class="card">
+    <div class="card__icon">✓</div>
+    <div class="card__title">2. 重匹配界面</div>
+    <div class="card__desc">核心页面。教师勾选被卡纸的试卷，系统自动选中之后的所有试卷，支持全选/取消和底部续打摘要。</div>
+    <a class="card__link" href="rematch.html" target="_blank">打开预览 →</a>
+  </div>
+
+  <div class="card">
+    <div class="card__icon">📋</div>
+    <div class="card__title">3. 续打确认页面</div>
+    <div class="card__desc">展示待打印范围（起始-结束序号）、试卷预览列表、设备信息和打印前注意事项。</div>
+    <a class="card__link" href="confirm-print.html" target="_blank">打开预览 →</a>
+  </div>
+
+  <div class="card">
+    <div class="card__icon">🎉</div>
+    <div class="card__title">4. 打印完成页面</div>
+    <div class="card__desc">包含两种状态：① 打印成功完成（含统计和记录）；② 提前结束任务（含取纸提醒）。</div>
+    <a class="card__link" href="print-complete.html" target="_blank">打开预览 →</a>
+  </div>
+</div>
+
+<div class="flow-info">
+  <h2>📋 页面流程说明</h2>
+  <ol>
+    <li><strong>打印中</strong> → 打印机卡纸 → 系统报错并中断当前任务</li>
+    <li><strong>卡纸提示页面</strong> → 弹窗询问"是否打印后续试卷？"</li>
+    <li>若选"否" → <strong>打印完成页面（结束状态）</strong> → 提示取出剩余试卷</li>
+    <li>若选"是" → <strong>重匹配界面</strong> → 勾选被卡纸试卷 → 点击"下一步"</li>
+    <li><strong>续打确认页面</strong> → 确认打印范围 → 点击"开始打印"</li>
+    <li>回到打印流程 → 完成后 → <strong>打印完成页面（成功状态）</strong></li>
+  </ol>
+</div>
+
+</body>
+</html>

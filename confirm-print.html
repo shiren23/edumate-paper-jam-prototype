@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>确认打印范围</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+.confirm-header {
+  padding: 24px 16px 16px;
+  text-align: center;
+}
+
+.confirm-header__icon {
+  width: 72px;
+  height: 72px;
+  background: var(--primary-fade);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  font-size: 36px;
+}
+
+.confirm-header__title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.confirm-header__desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-top: 8px;
+}
+
+/* 范围卡片 */
+.range-card {
+  margin: 0 16px 16px;
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.range-card__title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.range-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 20px 0;
+}
+
+.range-display__item {
+  text-align: center;
+}
+
+.range-display__num {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--primary);
+  line-height: 1;
+}
+
+.range-display__label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 6px;
+}
+
+.range-display__arrow {
+  font-size: 24px;
+  color: var(--text-tertiary);
+}
+
+.range-display__total {
+  text-align: center;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border);
+  margin-top: 8px;
+}
+
+.range-display__total-num {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.range-display__total-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+/* 试卷列表预览 */
+.preview-list {
+  margin: 0 16px 16px;
+}
+
+.preview-list__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 4px 10px;
+}
+
+.preview-list__title {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.preview-list__count {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.preview-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: white;
+  border-radius: 12px;
+  margin-bottom: 8px;
+}
+
+.preview-item__seq {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.preview-item__preview {
+  width: 40px;
+  height: 52px;
+  border-radius: 3px;
+  background: var(--bg-page);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  border: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.preview-item__info {
+  flex: 1;
+}
+
+.preview-item__name {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.preview-item__detail {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+/* 提示信息 */
+.tips-card {
+  margin: 0 16px 16px;
+  background: var(--primary-fade);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.tips-card__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 8px;
+}
+
+.tips-card__item {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  padding-left: 16px;
+  position: relative;
+}
+
+.tips-card__item::before {
+  content: '•';
+  position: absolute;
+  left: 4px;
+  color: var(--primary);
+}
+
+/* 设备信息 */
+.device-card {
+  margin: 0 16px 16px;
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.device-card__icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--primary-fade);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.device-card__info {
+  flex: 1;
+}
+
+.device-card__name {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.device-card__status {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.device-card__status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--success);
+}
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="status-bar">
+    <span>16:15</span>
+    <span>📶 5G 🔋</span>
+  </div>
+
+  <header class="app-bar">
+    <button class="app-bar__back" onclick="history.back()">←</button>
+    <h1 class="app-bar__title">确认打印范围</h1>
+    <div class="app-bar__actions">
+      <button class="app-bar__more">⋮</button>
+    </div>
+  </header>
+
+  <!-- 头部确认区 -->
+  <div class="confirm-header">
+    <div class="confirm-header__icon">📋</div>
+    <div class="confirm-header__title">请确认待打印范围</div>
+    <div class="confirm-header__desc">系统将为您创建新的打印任务</div>
+  </div>
+
+  <!-- 打印范围卡片 -->
+  <div class="range-card">
+    <div class="range-card__title">打印范围</div>
+    <div class="range-display">
+      <div class="range-display__item">
+        <div class="range-display__num">5</div>
+        <div class="range-display__label">起始序号</div>
+      </div>
+      <div class="range-display__arrow">→</div>
+      <div class="range-display__item">
+        <div class="range-display__num">37</div>
+        <div class="range-display__label">结束序号</div>
+      </div>
+    </div>
+    <div class="range-display__total">
+      <div class="range-display__total-num">共 33 张试卷</div>
+      <div class="range-display__total-label">第5张（李欣怡）至第37张（郑雅文）</div>
+    </div>
+  </div>
+
+  <!-- 设备信息 -->
+  <div class="device-card">
+    <div class="device-card__icon">🖨️</div>
+    <div class="device-card__info">
+      <div class="device-card__name">UNI A356DNL</div>
+      <div class="device-card__status">
+        <span class="device-card__status-dot"></span>
+        打印机就绪
+      </div>
+    </div>
+    <button class="btn btn--small" style="flex-shrink:0;">更换设备</button>
+  </div>
+
+  <!-- 试卷列表预览 -->
+  <div class="preview-list">
+    <div class="preview-list__header">
+      <span class="preview-list__title">待打印试卷</span>
+      <span class="preview-list__count">前5张预览</span>
+    </div>
+
+    <div class="preview-item">
+      <div class="preview-item__seq">5</div>
+      <div class="preview-item__preview">📄</div>
+      <div class="preview-item__info">
+        <div class="preview-item__name">李欣怡</div>
+        <div class="preview-item__detail">学号：250505 · 正确率 82%</div>
+      </div>
+    </div>
+
+    <div class="preview-item">
+      <div class="preview-item__seq">6</div>
+      <div class="preview-item__preview">📄</div>
+      <div class="preview-item__info">
+        <div class="preview-item__name">刘子墨</div>
+        <div class="preview-item__detail">学号：250506 · 正确率 75%</div>
+      </div>
+    </div>
+
+    <div class="preview-item">
+      <div class="preview-item__seq">7</div>
+      <div class="preview-item__preview">📄</div>
+      <div class="preview-item__info">
+        <div class="preview-item__name">赵雅婷</div>
+        <div class="preview-item__detail">学号：250507 · 正确率 91%</div>
+      </div>
+    </div>
+
+    <div class="preview-item">
+      <div class="preview-item__seq">8</div>
+      <div class="preview-item__preview">📄</div>
+      <div class="preview-item__info">
+        <div class="preview-item__name">周明辉</div>
+        <div class="preview-item__detail">学号：250508 · 正确率 68%</div>
+      </div>
+    </div>
+
+    <div class="preview-item">
+      <div class="preview-item__seq">9</div>
+      <div class="preview-item__preview">📄</div>
+      <div class="preview-item__info">
+        <div class="preview-item__name">孙雨萱</div>
+        <div class="preview-item__detail">学号：250509 · 正确率 85%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 提示信息 -->
+  <div class="tips-card">
+    <div class="tips-card__title">打印前请确认</div>
+    <div class="tips-card__item">请确保打印机纸盒中有足够的纸张</div>
+    <div class="tips-card__item">建议提前整理好纸盒，避免再次卡纸</div>
+    <div class="tips-card__item">打印过程中请勿退出当前页面</div>
+  </div>
+
+  <!-- 底部操作 -->
+  <div class="bottom-actions">
+    <button class="btn btn--primary" onclick="showPrintDialog()">开始打印</button>
+  </div>
+
+  <!-- 弹窗：开始打印确认 -->
+  <div id="printDialog" class="dialog-overlay" style="display:none;">
+    <div class="dialog">
+      <div class="dialog__content">
+        <div class="dialog__icon dialog__icon--warning">🖨️</div>
+        <div class="dialog__title">开始打印</div>
+        <div class="dialog__desc">即将开始打印第 5 张至第 37 张，共 33 张试卷。<br><br>请确认打印机纸盒中纸张充足，打印过程中请勿退出当前页面。</div>
+      </div>
+      <div class="dialog__actions">
+        <button class="dialog__btn dialog__btn--cancel" onclick="hideDialog()">取消</button>
+        <button class="dialog__btn dialog__btn--confirm" onclick="startPrint()">确认打印</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showPrintDialog() {
+  document.getElementById('printDialog').style.display = 'flex';
+}
+function hideDialog() {
+  document.getElementById('printDialog').style.display = 'none';
+}
+function startPrint() {
+  hideDialog();
+  window.location.href = 'print-complete.html?type=printing';
+}
+</script>
+
+</body>
+</html>

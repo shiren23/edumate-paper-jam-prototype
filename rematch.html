@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>重匹配 - 选择卡纸试卷</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+.rematch-banner {
+  margin: 0 16px 16px;
+  padding: 14px 16px;
+  background: var(--warning-light);
+  border: 1px solid #FCD34D;
+  border-radius: 12px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.rematch-banner__icon {
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.rematch-banner__content {
+  flex: 1;
+}
+
+.rematch-banner__title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.rematch-banner__desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+.paper-list {
+  padding: 0 16px 100px;
+}
+
+.paper-list__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 4px 12px;
+}
+
+.paper-list__title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.paper-list__subtitle {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.paper-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: white;
+  border-radius: 14px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  cursor: pointer;
+  transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.paper-item:active {
+  transform: scale(0.99);
+}
+
+.paper-item--checked {
+  background: var(--primary-fade);
+  box-shadow: 0 0 0 1.5px var(--primary);
+}
+
+.paper-item__check {
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--border);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 13px;
+  color: transparent;
+  transition: all 0.15s;
+}
+
+.paper-item--checked .paper-item__check {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+.paper-item__seq {
+  width: 32px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.paper-item__preview {
+  width: 48px;
+  height: 64px;
+  border-radius: 4px;
+  background: var(--bg-page);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.paper-item__preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.paper-item__info {
+  flex: 1;
+  min-width: 0;
+}
+
+.paper-item__name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.paper-item__detail {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 3px;
+}
+
+.paper-item__tag {
+  margin-top: 6px;
+}
+
+/* 全选工具栏 */
+.select-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: white;
+  margin: 0 16px 12px;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+
+.select-bar__left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.select-bar__check {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: transparent;
+}
+
+.select-bar__check--checked {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+
+.select-bar__text {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.select-bar__count {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* 底部选中摘要 */
+.bottom-summary {
+  position: fixed;
+  bottom: 76px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 343px;
+  background: var(--text-primary);
+  color: white;
+  border-radius: 12px;
+  padding: 10px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  z-index: 99;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.bottom-summary__text {
+  opacity: 0.9;
+}
+
+.bottom-summary__text strong {
+  opacity: 1;
+  font-weight: 600;
+}
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="status-bar">
+    <span>16:15</span>
+    <span>📶 5G 🔋</span>
+  </div>
+
+  <header class="app-bar">
+    <button class="app-bar__back" onclick="history.back()">←</button>
+    <h1 class="app-bar__title">重匹配</h1>
+    <div class="app-bar__actions">
+      <button class="app-bar__more">⋮</button>
+    </div>
+  </header>
+
+  <!-- 提示横幅 -->
+  <div class="rematch-banner">
+    <span class="rematch-banner__icon">💡</span>
+    <div class="rematch-banner__content">
+      <div class="rematch-banner__title">请勾选被卡纸的试卷</div>
+      <div class="rematch-banner__desc">系统已自动勾选被卡纸试卷之后的所有试卷。您也可以手动调整需要重新打印的范围。</div>
+    </div>
+  </div>
+
+  <!-- 全选工具栏 -->
+  <div class="select-bar">
+    <div class="select-bar__left" onclick="toggleSelectAll()">
+      <div class="select-bar__check" id="selectAllCheck"></div>
+      <span class="select-bar__text">全选</span>
+    </div>
+    <span class="select-bar__count">共 37 张试卷</span>
+  </div>
+
+  <!-- 试卷列表 -->
+  <div class="paper-list" id="paperList">
+    <div class="paper-list__header">
+      <span class="paper-list__title">试卷列表</span>
+      <span class="paper-list__subtitle" id="selectedCount">已选 0 张</span>
+    </div>
+
+    <!-- JS 动态生成 -->
+  </div>
+
+  <!-- 底部摘要 + 按钮 -->
+  <div class="bottom-actions" style="padding-bottom: 16px;">
+    <div class="bottom-summary" id="bottomSummary" style="display:none;">
+      <span class="bottom-summary__text">已选 <strong id="summaryCount">0</strong> 张，将续打 <strong id="continueCount">0</strong> 张</span>
+    </div>
+    <button class="btn btn--primary" id="nextBtn" disabled onclick="goToConfirm()">下一步</button>
+  </div>
+</div>
+
+<script>
+// 模拟试卷数据
+const papers = [
+  { id: 1, seq: 1, name: "林晓雨", studentNo: "250501", printed: true },
+  { id: 2, seq: 2, name: "陈宇轩", studentNo: "250502", printed: true },
+  { id: 3, seq: 3, name: "王思琪", studentNo: "250503", printed: true },
+  { id: 4, seq: 4, name: "张浩然", studentNo: "250504", printed: true },
+  { id: 5, seq: 5, name: "李欣怡", studentNo: "250505", printed: false, jammed: true },  // 卡纸点
+  { id: 6, seq: 6, name: "刘子墨", studentNo: "250506", printed: false },
+  { id: 7, seq: 7, name: "赵雅婷", studentNo: "250507", printed: false },
+  { id: 8, seq: 8, name: "周明辉", studentNo: "250508", printed: false },
+  { id: 9, seq: 9, name: "孙雨萱", studentNo: "250509", printed: false },
+  { id: 10, seq: 10, name: "吴俊杰", studentNo: "250510", printed: false },
+];
+
+let selectedIds = new Set();
+
+// 找到卡纸位置后自动勾选之后的所有试卷
+function autoSelectAfterJam() {
+  const jamIndex = papers.findIndex(p => p.jammed);
+  if (jamIndex >= 0) {
+    for (let i = jamIndex; i < papers.length; i++) {
+      selectedIds.add(papers[i].id);
+    }
+  }
+  renderList();
+  updateSummary();
+}
+
+function renderList() {
+  const listEl = document.getElementById('paperList');
+  const html = papers.map(paper => {
+    const isChecked = selectedIds.has(paper.id);
+    const isJammed = paper.jammed;
+    const statusTag = paper.printed
+      ? '<span class="tag tag--success">已打印</span>'
+      : isJammed
+        ? '<span class="tag tag--danger">卡纸</span>'
+        : '<span class="tag tag--primary">待打印</span>';
+
+    return `
+      <div class="paper-item ${isChecked ? 'paper-item--checked' : ''}" onclick="togglePaper(${paper.id})">
+        <div class="paper-item__check">✓</div>
+        <div class="paper-item__seq">${paper.seq}</div>
+        <div class="paper-item__preview">📄</div>
+        <div class="paper-item__info">
+          <div class="paper-item__name">${paper.name}</div>
+          <div class="paper-item__detail">学号：${paper.studentNo}</div>
+          <div class="paper-item__tag">${statusTag}</div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // 保留 header，替换后面的内容
+  const header = listEl.querySelector('.paper-list__header').outerHTML;
+  listEl.innerHTML = header + html;
+}
+
+function togglePaper(id) {
+  if (selectedIds.has(id)) {
+    selectedIds.delete(id);
+  } else {
+    selectedIds.add(id);
+  }
+  renderList();
+  updateSummary();
+}
+
+function toggleSelectAll() {
+  const allSelected = selectedIds.size === papers.length;
+  if (allSelected) {
+    selectedIds.clear();
+  } else {
+    papers.forEach(p => selectedIds.add(p.id));
+  }
+  renderList();
+  updateSummary();
+}
+
+function updateSummary() {
+  const selectedCount = selectedIds.size;
+  const jamIndex = papers.findIndex(p => p.jammed);
+  const lastSelectedSeq = Math.max(...papers.filter(p => selectedIds.has(p.id)).map(p => p.seq), 0);
+  const continueCount = lastSelectedSeq > 0 ? papers.length - lastSelectedSeq + 1 : 0;
+
+  document.getElementById('selectedCount').textContent = `已选 ${selectedCount} 张`;
+  document.getElementById('summaryCount').textContent = selectedCount;
+  document.getElementById('continueCount').textContent = continueCount;
+
+  const summaryEl = document.getElementById('bottomSummary');
+  const nextBtn = document.getElementById('nextBtn');
+
+  if (selectedCount > 0) {
+    summaryEl.style.display = 'flex';
+    nextBtn.disabled = false;
+  } else {
+    summaryEl.style.display = 'none';
+    nextBtn.disabled = true;
+  }
+
+  // 更新全选状态
+  const selectAllCheck = document.getElementById('selectAllCheck');
+  if (selectedCount === papers.length) {
+    selectAllCheck.classList.add('select-bar__check--checked');
+    selectAllCheck.textContent = '✓';
+  } else {
+    selectAllCheck.classList.remove('select-bar__check--checked');
+    selectAllCheck.textContent = '';
+  }
+}
+
+function goToConfirm() {
+  window.location.href = 'confirm-print.html';
+}
+
+// 初始化
+autoSelectAfterJam();
+</script>
+
+</body>
+</html>
