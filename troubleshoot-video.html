@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>卡纸排障视频</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+/* 页面简介 */
+.page-intro {
+  margin: 16px 16px 0;
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* QA 列表容器 */
+.qa-list {
+  margin: 12px 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* QA 单项 */
+.qa-item {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  overflow: hidden;
+}
+
+/* 问题标题栏 */
+.qa-item__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.qa-item__header:active {
+  background: var(--bg-page);
+}
+
+.qa-item__question {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.5;
+  flex: 1;
+  padding-right: 12px;
+}
+
+.qa-item__arrow {
+  font-size: 18px;
+  color: var(--text-tertiary);
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+
+.qa-item__arrow--open {
+  transform: rotate(180deg);
+}
+
+/* 展开内容区 */
+.qa-item__body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.qa-item__body--open {
+  max-height: 600px;
+}
+
+.qa-item__content {
+  padding: 0 16px 16px;
+}
+
+/* 文字回答 */
+.qa-item__text {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin-bottom: 12px;
+}
+
+.qa-item__text ol {
+  padding-left: 18px;
+  margin: 0;
+}
+
+.qa-item__text li {
+  margin-bottom: 6px;
+}
+
+/* 视频区域 */
+.qa-item__video {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: #1F2937;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.qa-item__video-placeholder {
+  color: var(--text-tertiary);
+  font-size: 14px;
+  text-align: center;
+}
+
+.qa-item__video-play {
+  position: absolute;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(99, 102, 241, 0.9);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.qa-item__video-play:active {
+  transform: scale(0.92);
+}
+
+.qa-item__video-label {
+  position: absolute;
+  bottom: 8px;
+  left: 10px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.8);
+  background: rgba(0,0,0,0.4);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* 无视频提示 */
+.qa-item__video--empty {
+  background: var(--bg-page);
+  border: 1px dashed var(--border);
+}
+
+.qa-item__video--empty .qa-item__video-placeholder {
+  color: var(--text-tertiary);
+}
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="status-bar">
+    <span>16:20</span>
+    <span>📶 5G 🔋</span>
+  </div>
+
+  <header class="app-bar">
+    <button class="app-bar__back" onclick="history.back()">←</button>
+    <h1 class="app-bar__title">卡纸排障视频</h1>
+    <div class="app-bar__actions">
+      <button class="app-bar__more">⋮</button>
+    </div>
+  </header>
+
+  <div class="page-intro">
+    点击下方问题查看详细的文字步骤说明与排障视频。请按照指引安全操作打印机。
+  </div>
+
+  <div class="qa-list">
+    <!-- Q1 -->
+    <div class="qa-item">
+      <div class="qa-item__header" onclick="toggleQa(this)">
+        <div class="qa-item__question">如何从纸盒中取出卡住的试卷？</div>
+        <div class="qa-item__arrow">▼</div>
+      </div>
+      <div class="qa-item__body">
+        <div class="qa-item__content">
+          <div class="qa-item__text">
+            <ol>
+              <li>双手握住纸盒两侧，平稳向外拉出打印机纸盒</li>
+              <li>轻轻抖动纸盒，使卡住的试卷松动</li>
+              <li>双手捏住试卷边缘，沿出纸方向缓慢抽出</li>
+              <li>检查纸盒内是否有碎纸残留，清理干净后推回纸盒</li>
+            </ol>
+          </div>
+          <div class="qa-item__video">
+            <div class="qa-item__video-play">▶</div>
+            <div class="qa-item__video-label">01:24</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="qa-item">
+      <div class="qa-item__header" onclick="toggleQa(this)">
+        <div class="qa-item__question">如何打开前盖取出硒鼓清理卡纸？</div>
+        <div class="qa-item__arrow">▼</div>
+      </div>
+      <div class="qa-item__body">
+        <div class="qa-item__content">
+          <div class="qa-item__text">
+            <ol>
+              <li>按下打印机前盖释放按钮，打开前盖</li>
+              <li>等待硒鼓冷却（约 1-2 分钟），避免烫伤</li>
+              <li>握住硒鼓手柄，向上提起并向外取出</li>
+              <li>翻开内部盖板，查看卡纸位置</li>
+              <li>沿出纸方向轻轻抽出卡住的试卷</li>
+            </ol>
+          </div>
+          <div class="qa-item__video">
+            <div class="qa-item__video-play">▶</div>
+            <div class="qa-item__video-label">02:15</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q3 -->
+    <div class="qa-item">
+      <div class="qa-item__header" onclick="toggleQa(this)">
+        <div class="qa-item__question">纸张撕裂在打印机内怎么办？</div>
+        <div class="qa-item__arrow">▼</div>
+      </div>
+      <div class="qa-item__body">
+        <div class="qa-item__content">
+          <div class="qa-item__text">
+            <ol>
+              <li>关闭打印机电源，防止继续运转造成更大损坏</li>
+              <li>打开前盖，取出硒鼓，仔细检查内部各滚轮</li>
+              <li>使用镊子或戴手套，小心取出所有碎纸片</li>
+              <li>确认没有残留碎纸后，装回硒鼓，关闭前盖</li>
+              <li>重新开启电源，打印机应恢复正常</li>
+            </ol>
+          </div>
+          <div class="qa-item__video">
+            <div class="qa-item__video-play">▶</div>
+            <div class="qa-item__video-label">01:58</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q4 -->
+    <div class="qa-item">
+      <div class="qa-item__header" onclick="toggleQa(this)">
+        <div class="qa-item__question">取出卡纸后如何正确装回硒鼓？</div>
+        <div class="qa-item__arrow">▼</div>
+      </div>
+      <div class="qa-item__body">
+        <div class="qa-item__content">
+          <div class="qa-item__text">
+            <ol>
+              <li>握住硒鼓手柄，对准打印机内部导轨</li>
+              <li>沿导轨方向轻轻推入，直到听到"咔嗒"锁定声</li>
+              <li>确认硒鼓完全到位，无晃动</li>
+              <li>放下内部盖板，关闭打印机前盖</li>
+            </ol>
+          </div>
+          <div class="qa-item__video qa-item__video--empty">
+            <div class="qa-item__video-placeholder">视频上传中...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q5 -->
+    <div class="qa-item">
+      <div class="qa-item__header" onclick="toggleQa(this)">
+        <div class="qa-item__question">清理完成后打印机仍报错怎么办？</div>
+        <div class="qa-item__arrow">▼</div>
+      </div>
+      <div class="qa-item__body">
+        <div class="qa-item__content">
+          <div class="qa-item__text">
+            <ol>
+              <li>确认所有盖板（前盖、纸盒盖）已完全关闭</li>
+              <li>关闭打印机电源，等待 10 秒后重新开启</li>
+              <li>检查打印机显示屏的错误代码，对照说明书排查</li>
+              <li>如仍无法解决，请联系打印机管理员或技术支持</li>
+            </ol>
+          </div>
+          <div class="qa-item__video qa-item__video--empty">
+            <div class="qa-item__video-placeholder">视频上传中...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleQa(header) {
+  const item = header.parentElement;
+  const body = item.querySelector('.qa-item__body');
+  const arrow = header.querySelector('.qa-item__arrow');
+  const isOpen = body.classList.contains('qa-item__body--open');
+
+  // 关闭其他已展开的项（手风琴效果，可选）
+  document.querySelectorAll('.qa-item__body--open').forEach(el => {
+    if (el !== body) {
+      el.classList.remove('qa-item__body--open');
+      el.parentElement.querySelector('.qa-item__arrow').classList.remove('qa-item__arrow--open');
+    }
+  });
+
+  if (isOpen) {
+    body.classList.remove('qa-item__body--open');
+    arrow.classList.remove('qa-item__arrow--open');
+  } else {
+    body.classList.add('qa-item__body--open');
+    arrow.classList.add('qa-item__arrow--open');
+  }
+}
+</script>
+
+</body>
+</html>
