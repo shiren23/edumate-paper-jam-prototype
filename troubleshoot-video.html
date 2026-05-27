@@ -371,33 +371,74 @@
   flex-shrink: 0;
 }
 
-/* 纯文字描述 */
-.solution-desc {
+/* 信息框（现象/前提/原因/备注/联系方式/参考） */
+.info-box {
+  margin-bottom: 14px;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.info-box:last-child {
+  margin-bottom: 0;
+}
+
+.info-box__label {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.info-box__text {
   font-size: 14px;
   color: var(--text-secondary);
-  line-height: 1.8;
-}
-
-/* 提示信息 */
-.tip-box {
-  margin-top: 12px;
-  background: rgba(99,102,241,0.06);
-  border-radius: 12px;
-  padding: 12px 14px;
-  display: flex;
-  gap: 8px;
-}
-
-.tip-box__icon {
-  font-size: 16px;
-  flex-shrink: 0;
-  margin-top: 1px;
-}
-
-.tip-box__text {
-  font-size: 13px;
-  color: var(--text-secondary);
   line-height: 1.6;
+}
+
+.info-box--phenomenon {
+  background: rgba(245, 158, 11, 0.08);
+}
+.info-box--phenomenon .info-box__label {
+  color: #D97706;
+}
+
+.info-box--precondition {
+  background: rgba(59, 130, 246, 0.08);
+}
+.info-box--precondition .info-box__label {
+  color: #2563EB;
+}
+
+.info-box--cause {
+  background: rgba(239, 68, 68, 0.08);
+}
+.info-box--cause .info-box__label {
+  color: #DC2626;
+}
+
+.info-box--note {
+  background: rgba(99, 102, 241, 0.08);
+}
+.info-box--note .info-box__label {
+  color: #6366F1;
+}
+
+.info-box--contact {
+  background: rgba(16, 185, 129, 0.08);
+}
+.info-box--contact .info-box__label {
+  color: #059669;
+}
+
+.info-box--reference {
+  background: rgba(107, 114, 128, 0.08);
+}
+.info-box--reference .info-box__label {
+  color: #4B5563;
+}
+
+.reference-link {
+  color: #6366F1;
+  text-decoration: underline;
 }
 </style>
 </head>
@@ -425,13 +466,18 @@
     <div class="brand-grid">
       <div class="brand-card" onclick="selectBrand('hantu')">
         <div class="brand-card__icon">🖨️</div>
-        <div class="brand-card__name">汉图（极印）</div>
-        <div class="brand-card__desc">XA356DNL 等型号</div>
+        <div class="brand-card__name">汉图打印机故障</div>
+        <div class="brand-card__desc">6 类常见问题</div>
       </div>
       <div class="brand-card" onclick="selectBrand('canon')">
         <div class="brand-card__icon">🖨️</div>
-        <div class="brand-card__name">佳能 Canon</div>
-        <div class="brand-card__desc">激光打印机系列</div>
+        <div class="brand-card__name">佳能打印机故障</div>
+        <div class="brand-card__desc">2 类常见问题</div>
+      </div>
+      <div class="brand-card" onclick="selectBrand('miniprogram')">
+        <div class="brand-card__icon">📱</div>
+        <div class="brand-card__name">小程序问题</div>
+        <div class="brand-card__desc">1 类常见问题</div>
       </div>
     </div>
   </div>
@@ -477,61 +523,153 @@
 // ========== 数据 ==========
 const brandData = {
   hantu: {
-    name: '汉图（极印）',
-    desc: 'XA356DNL 等型号',
+    name: '汉图打印机故障',
+    desc: '6 类常见问题',
     icon: '🖨️',
     issues: [
       {
-        code: '5407',
-        codeLabel: '错误',
-        title: '汉图卡纸',
-        summary: '打开前盖板，抽出耗材组件；取出自动进纸盒，打开双面打印组件；打开后盖板，左右同时按下压力解除把手；依次检查是否有卡纸；如是，小心取出卡纸。',
-        videoLabel: '02:30',
-        hasVideo: true,
-        steps: [
-          '打开前盖板，抽出耗材组件；',
-          '取出自动进纸盒，打开双面打印组件；',
-          '打开后盖板，左右同时按下压力解除把手；',
-          '依次检查是否有卡纸；如是，小心取出卡纸。'
-        ],
-        description: null
-      },
-      {
         code: '5503',
         codeLabel: '错误',
-        title: '后盖板处异常',
-        summary: '请确认后盖板是否打开，并检查是否有卡纸，如是，清除卡纸后，关闭后盖板。',
+        title: '后盖板异常',
+        summary: '查看后盖板是否打开，检查卡纸，关闭后盖板',
         videoLabel: '01:15',
         hasVideo: true,
-        steps: [],
-        description: '请确认后盖板是否打开，并检查是否有卡纸，如是，清除卡纸后，关闭后盖板。'
+        steps: [
+          '查看打印机后盖板是否打开',
+          '检查里面是否有卡纸，有就轻轻拉出来',
+          '关闭后盖板'
+        ],
+        note: '若纸捏不出来或机器一直报警，可联系厂商处理',
+        contact: '400-088-8253（上海汉图，每日 8:00-20:00）'
       },
       {
         code: null,
         codeLabel: '故障',
-        title: '扫描试卷失败',
-        summary: '创建任务时迪迪智批提示扫描失败或打印机繁忙，请稍后再试。打印机显示屏一直在loading状态',
+        title: '扫描试卷失败 / 打印机繁忙',
+        summary: '小程序提示扫描失败或打印机繁忙，打印机屏幕一直转圈 loading',
         videoLabel: null,
         hasVideo: false,
-        steps: [],
-        description: '创建任务时迪迪智批提示扫描失败或打印机繁忙，请稍后再试。打印机显示屏一直在loading状态'
+        phenomenon: '小程序提示"扫描失败"或"打印机繁忙"，打印机屏幕一直转圈 loading',
+        steps: [
+          '打印机关机，等几秒再开机',
+          '小程序退出到首页',
+          '重新点击"智能批阅"，重新创建任务'
+        ]
+      },
+      {
+        code: '5407',
+        codeLabel: '错误',
+        title: '卡纸',
+        summary: '打开前后门，取出硒鼓和碳粉盒，检查并清理卡纸',
+        videoLabel: '02:30',
+        hasVideo: true,
+        steps: [
+          '打开打印机前门',
+          '打开打印机后门',
+          '把硒鼓和碳粉盒拿出来',
+          '仔细检查内部是否有卡纸或异物',
+          '清理干净后，装回硒鼓碳粉，关闭前后门'
+        ]
+      },
+      {
+        code: null,
+        codeLabel: '故障',
+        title: '留痕打印时卡纸（前门处）',
+        summary: '打开前盖板，抽出卡纸，关闭前盖板',
+        videoLabel: null,
+        hasVideo: false,
+        steps: [
+          '打开打印机前盖板',
+          '轻轻把卡住的纸张抽出来',
+          '关闭前盖板'
+        ]
+      },
+      {
+        code: null,
+        codeLabel: '故障',
+        title: '搜索不到打印机',
+        summary: '检查 WiFi 连接，开启微信本地网络权限',
+        videoLabel: null,
+        hasVideo: false,
+        precondition: '打印机和手机在同一个 WiFi，打印机网络指示灯正常',
+        steps: [
+          '打开手机设置',
+          '找到微信 → 打开本地网络权限',
+          '返回小程序，重新搜索打印机'
+        ]
+      },
+      {
+        code: null,
+        codeLabel: '故障',
+        title: '连接打印机失败（硒鼓/墨粉报错）',
+        summary: '重新安装硒鼓，确保卡到位，查看报错是否消失',
+        videoLabel: null,
+        hasVideo: false,
+        phenomenon: '打印机显示墨粉或硒鼓异常',
+        steps: [
+          '打开打印机前盖板',
+          '把硒鼓拉出来',
+          '重新安装硒鼓，确保卡到位',
+          '关闭前盖板',
+          '查看屏幕上的墨粉/硒鼓报错是否消失',
+          '报错消失后，重新连接打印机'
+        ]
       }
     ]
   },
   canon: {
-    name: '佳能 Canon',
-    desc: '激光打印机系列',
+    name: '佳能打印机故障',
+    desc: '2 类常见问题',
     icon: '🖨️',
     issues: [
       {
         code: null,
-        codeLabel: '卡纸',
-        title: '卡纸修复操作',
-        summary: '佳能打印机卡纸修复操作流程。',
-        videoLabel: '03:00',
+        codeLabel: '故障',
+        title: '前盖板处卡纸',
+        summary: '打开前盖板，抽出卡纸，关闭前盖板',
+        videoLabel: '02:00',
         hasVideo: true,
-        steps: [],
-        description: '更多详细操作请参考佳能官方文档：https://oip.manual.canon/USRMA-7188-zz-SSM-750-zhCN/contents/devu-trb-papers_jam.html'
+        cause: '纸张放太多、纸张褶皱',
+        steps: [
+          '打开打印机前盖板',
+          '把卡住的纸张轻轻抽出来',
+          '关闭前盖板'
+        ],
+        reference: 'https://oip.manual.canon/USRMA-7188-zz-SSM-750-zhCN/contents/devu-trb-papers_jam.html'
+      },
+      {
+        code: null,
+        codeLabel: '故障',
+        title: '后盖板处卡纸',
+        summary: '打开后盖板，抽出卡纸，关闭后盖板',
+        videoLabel: '01:30',
+        hasVideo: true,
+        steps: [
+          '打开打印机后盖板',
+          '把卡住的纸张轻轻抽出来',
+          '关闭后盖板'
+        ]
+      }
+    ]
+  },
+  miniprogram: {
+    name: '小程序问题',
+    desc: '1 类常见问题',
+    icon: '📱',
+    issues: [
+      {
+        code: null,
+        codeLabel: '问题',
+        title: '智能批阅不显示班级',
+        summary: '回到首页，点击智能批阅按钮，登录后班级信息显示',
+        videoLabel: null,
+        hasVideo: false,
+        steps: [
+          '不要从其他入口进，先回到小程序首页',
+          '直接点击首页上的"智能批阅"按钮',
+          '弹出登录窗口后正常登录',
+          '再进入创建任务页面，班级信息就会显示'
+        ]
       }
     ]
   }
@@ -609,8 +747,8 @@ function selectIssue(issueIdx) {
 
   // 更新头部信息
   document.getElementById('detailBrand').textContent = brand.name;
-  document.getElementById('detailCode').textContent = issue.code ? `错误代码 ${issue.code}` : '常见故障';
-  document.getElementById('detailCode').style.display = issue.code ? 'inline' : 'none';
+  document.getElementById('detailCode').textContent = issue.code ? `错误代码 ${issue.code}` : issue.codeLabel;
+  document.getElementById('detailCode').style.display = 'inline';
   document.getElementById('detailTitle').textContent = issue.title;
 
   // 更新视频区
@@ -619,7 +757,7 @@ function selectIssue(issueIdx) {
     videoSection.innerHTML = `
       <div class="video-player">
         <div class="video-player__play">▶</div>
-        <div class="video-player__label">${issue.videoLabel}</div>
+        <div class="video-player__label">${issue.videoLabel || ''}</div>
       </div>
     `;
   } else {
@@ -630,15 +768,45 @@ function selectIssue(issueIdx) {
     `;
   }
 
-  // 更新解法区：有步骤则显示步骤列表，无步骤则显示文字描述
-  const solutionContent = document.getElementById('solutionContent');
-  if (issue.steps && issue.steps.length > 0) {
-    solutionContent.innerHTML = `<ol class="steps-list">${issue.steps.map(s => `<li>${s}</li>`).join('')}</ol>`;
-  } else if (issue.description) {
-    solutionContent.innerHTML = `<div class="solution-desc">${issue.description}</div>`;
-  } else {
-    solutionContent.innerHTML = '';
+  // 构建解法区 HTML
+  let html = '';
+
+  // 现象
+  if (issue.phenomenon) {
+    html += `<div class="info-box info-box--phenomenon"><div class="info-box__label">现象</div><div class="info-box__text">${issue.phenomenon}</div></div>`;
   }
+
+  // 前提
+  if (issue.precondition) {
+    html += `<div class="info-box info-box--precondition"><div class="info-box__label">前提</div><div class="info-box__text">${issue.precondition}</div></div>`;
+  }
+
+  // 原因
+  if (issue.cause) {
+    html += `<div class="info-box info-box--cause"><div class="info-box__label">原因</div><div class="info-box__text">${issue.cause}</div></div>`;
+  }
+
+  // 步骤
+  if (issue.steps && issue.steps.length > 0) {
+    html += `<ol class="steps-list">${issue.steps.map(s => `<li>${s}</li>`).join('')}</ol>`;
+  }
+
+  // 备注
+  if (issue.note) {
+    html += `<div class="info-box info-box--note"><div class="info-box__label">备注</div><div class="info-box__text">${issue.note}</div></div>`;
+  }
+
+  // 联系方式
+  if (issue.contact) {
+    html += `<div class="info-box info-box--contact"><div class="info-box__label">厂商联系方式</div><div class="info-box__text">${issue.contact}</div></div>`;
+  }
+
+  // 参考链接
+  if (issue.reference) {
+    html += `<div class="info-box info-box--reference"><div class="info-box__label">参考</div><div class="info-box__text"><a href="${issue.reference}" target="_blank" class="reference-link">佳能官方卡纸修复指南</a></div></div>`;
+  }
+
+  document.getElementById('solutionContent').innerHTML = html;
 
   historyStack.push('detail');
   showPage('detailPage');
