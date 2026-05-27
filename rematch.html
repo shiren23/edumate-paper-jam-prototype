@@ -346,7 +346,6 @@ function renderCard() {
   const paper = papers[currentIndex];
   const isChecked = selectedIds.has(paper.id);
 
-  document.getElementById('cardSeq').textContent = paper.seq;
   document.getElementById('cardName').textContent = paper.name;
   document.getElementById('cardDetail').textContent = `学号：${paper.studentNo}`;
 
