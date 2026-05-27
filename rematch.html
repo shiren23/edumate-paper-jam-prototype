@@ -152,16 +152,38 @@
   cursor: not-allowed;
 }
 
-/* 页码 */
+/* 页码跳转 */
 .paper-pagination {
   text-align: center;
   margin-top: 16px;
   font-size: 15px;
   font-weight: 600;
   color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
 }
 
-.paper-pagination span {
+.paper-pagination__input {
+  width: 48px;
+  height: 32px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: white;
+  outline: none;
+  padding: 0;
+}
+
+.paper-pagination__input:focus {
+  border-color: var(--primary);
+}
+
+.paper-pagination__total {
   color: var(--text-secondary);
   font-weight: 400;
 }
@@ -283,8 +305,11 @@
     <button class="paper-nav paper-nav--next" id="nextBtn" onclick="nextPaper()">›</button>
   </div>
 
-  <!-- 页码 -->
-  <div class="paper-pagination" id="pagination">1 <span>/ 10</span></div>
+  <!-- 页码跳转 -->
+  <div class="paper-pagination">
+    <input class="paper-pagination__input" id="pageInput" type="number" min="1" max="10" value="1" onkeydown="onPageInputKey(event)" onblur="onPageInputBlur()">
+    <span class="paper-pagination__total">/ <span id="pageTotal">10</span></span>
+  </div>
 
   <!-- 选中摘要 -->
   <div class="bottom-summary-bar" id="summaryBar">
@@ -358,8 +383,11 @@ function renderCard() {
   }
   document.getElementById('cardTag').innerHTML = tagHtml;
 
-  // 页码
-  document.getElementById('pagination').innerHTML = `${paper.seq} <span>/ ${papers.length}</span>`;
+  // 页码输入框
+  const inputEl = document.getElementById('pageInput');
+  inputEl.value = paper.seq;
+  inputEl.max = papers.length;
+  document.getElementById('pageTotal').textContent = papers.length;
 
   // 翻页按钮状态
   document.getElementById('prevBtn').disabled = currentIndex === 0;
@@ -417,6 +445,26 @@ function updateSummary() {
 
 function goToConfirm() {
   window.location.href = 'confirm-print.html';
+}
+
+function onPageInputKey(e) {
+  if (e.key === 'Enter') {
+    onPageInputBlur();
+  }
+}
+
+function onPageInputBlur() {
+  const inputEl = document.getElementById('pageInput');
+  let val = parseInt(inputEl.value, 10);
+  if (isNaN(val)) {
+    inputEl.value = papers[currentIndex].seq;
+    return;
+  }
+  val = Math.max(1, Math.min(papers.length, val));
+  inputEl.value = val;
+  currentIndex = papers.findIndex(p => p.seq === val);
+  if (currentIndex < 0) currentIndex = val - 1;
+  renderCard();
 }
 
 // 键盘支持
