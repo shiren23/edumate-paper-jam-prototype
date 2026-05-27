@@ -36,7 +36,7 @@
   position: relative;
 }
 
-/* 左上角紫色序号 */
+/* 左上角页码跳转标签 */
 .paper-card__seq {
   position: absolute;
   top: 12px;
@@ -46,10 +46,34 @@
   color: white;
   font-size: 13px;
   font-weight: 700;
-  padding: 4px 10px;
+  padding: 4px 8px;
   border-radius: 8px;
-  min-width: 32px;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.paper-card__seq input {
+  width: 28px;
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: right;
+  padding: 0;
+  outline: none;
+  -moz-appearance: textfield;
+}
+
+.paper-card__seq input::-webkit-outer-spin-button,
+.paper-card__seq input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.paper-card__seq input::selection {
+  background: rgba(255,255,255,0.3);
 }
 
 /* 右上角红色勾选圆点 */
@@ -152,42 +176,6 @@
   cursor: not-allowed;
 }
 
-/* 页码跳转 */
-.paper-pagination {
-  text-align: center;
-  margin-top: 16px;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text-primary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-}
-
-.paper-pagination__input {
-  width: 48px;
-  height: 32px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  text-align: center;
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text-primary);
-  background: white;
-  outline: none;
-  padding: 0;
-}
-
-.paper-pagination__input:focus {
-  border-color: var(--primary);
-}
-
-.paper-pagination__total {
-  color: var(--text-secondary);
-  font-weight: 400;
-}
-
 /* 底部摘要 */
 .bottom-summary-bar {
   display: flex;
@@ -284,8 +272,11 @@
   <!-- 试卷展示区 -->
   <div class="paper-viewer">
     <div class="paper-card" id="paperCard" onclick="toggleCurrent()">
-      <!-- 左上角紫色序号 -->
-      <div class="paper-card__seq" id="cardSeq">1</div>
+      <!-- 左上角页码跳转 -->
+      <div class="paper-card__seq">
+        <input id="cardSeqInput" type="number" min="1" max="10" value="1" onkeydown="onSeqInputKey(event)" onblur="onSeqInputBlur()">
+        <span id="cardSeqTotal">/ 10</span>
+      </div>
       <!-- 右上角红色勾选 -->
       <div class="paper-card__check" id="cardCheck">✓</div>
       <!-- 试卷图片 -->
@@ -303,12 +294,6 @@
     <!-- 左右翻页 -->
     <button class="paper-nav paper-nav--prev" id="prevBtn" onclick="prevPaper()">‹</button>
     <button class="paper-nav paper-nav--next" id="nextBtn" onclick="nextPaper()">›</button>
-  </div>
-
-  <!-- 页码跳转 -->
-  <div class="paper-pagination">
-    <input class="paper-pagination__input" id="pageInput" type="number" min="1" max="10" value="1" onkeydown="onPageInputKey(event)" onblur="onPageInputBlur()">
-    <span class="paper-pagination__total">/ <span id="pageTotal">10</span></span>
   </div>
 
   <!-- 选中摘要 -->
@@ -383,11 +368,11 @@ function renderCard() {
   }
   document.getElementById('cardTag').innerHTML = tagHtml;
 
-  // 页码输入框
-  const inputEl = document.getElementById('pageInput');
-  inputEl.value = paper.seq;
-  inputEl.max = papers.length;
-  document.getElementById('pageTotal').textContent = papers.length;
+  // 左上角页码输入框
+  const seqInput = document.getElementById('cardSeqInput');
+  seqInput.value = paper.seq;
+  seqInput.max = papers.length;
+  document.getElementById('cardSeqTotal').textContent = '/ ' + papers.length;
 
   // 翻页按钮状态
   document.getElementById('prevBtn').disabled = currentIndex === 0;
@@ -447,14 +432,14 @@ function goToConfirm() {
   window.location.href = 'confirm-print.html';
 }
 
-function onPageInputKey(e) {
+function onSeqInputKey(e) {
   if (e.key === 'Enter') {
-    onPageInputBlur();
+    onSeqInputBlur();
   }
 }
 
-function onPageInputBlur() {
-  const inputEl = document.getElementById('pageInput');
+function onSeqInputBlur() {
+  const inputEl = document.getElementById('cardSeqInput');
   let val = parseInt(inputEl.value, 10);
   if (isNaN(val)) {
     inputEl.value = papers[currentIndex].seq;
