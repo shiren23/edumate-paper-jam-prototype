@@ -304,6 +304,31 @@
   font-size: 14px;
 }
 
+/* 图片占位（无视频时显示） */
+.image-placeholder {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: var(--bg-page);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--border);
+}
+
+.image-placeholder__icon {
+  font-size: 40px;
+  margin-bottom: 8px;
+}
+
+.image-placeholder__text {
+  font-size: 14px;
+  color: var(--text-tertiary);
+}
+
 /* 文字解法区 */
 .solution-section {
   margin: 12px 16px 24px;
@@ -461,7 +486,7 @@
   <!-- ========== 第一步：选择品牌 ========== -->
   <div class="brand-page brand-page--active" id="brandPage">
     <div class="brand-intro">
-      请选择您使用的打印机品牌，查看对应的排障视频与操作步骤。
+      请选择故障分类，查看对应的排障步骤与示意图。
     </div>
     <div class="brand-grid">
       <div class="brand-card" onclick="selectBrand('hantu')">
@@ -528,32 +553,17 @@ const brandData = {
     icon: '🖨️',
     issues: [
       {
-        code: '5503',
-        codeLabel: '错误',
-        title: '后盖板异常',
-        summary: '查看后盖板是否打开，检查卡纸，关闭后盖板',
-        videoLabel: '01:15',
-        hasVideo: true,
-        steps: [
-          '查看打印机后盖板是否打开',
-          '检查里面是否有卡纸，有就轻轻拉出来',
-          '关闭后盖板'
-        ],
-        note: '若纸捏不出来或机器一直报警，可联系厂商处理',
-        contact: '400-088-8253（上海汉图，每日 8:00-20:00）'
-      },
-      {
         code: null,
         codeLabel: '故障',
-        title: '扫描试卷失败 / 打印机繁忙',
-        summary: '小程序提示扫描失败或打印机繁忙，打印机屏幕一直转圈 loading',
+        title: '搜索不到打印机',
+        summary: '检查 WiFi 连接，开启微信本地网络权限',
         videoLabel: null,
         hasVideo: false,
-        phenomenon: '小程序提示"扫描失败"或"打印机繁忙"，打印机屏幕一直转圈 loading',
+        precondition: '打印机和手机在同一个 WiFi，打印机网络指示灯正常',
         steps: [
-          '打印机关机，等几秒再开机',
-          '小程序退出到首页',
-          '重新点击"智能批阅"，重新创建任务'
+          '打开手机设置',
+          '找到微信 → 打开本地网络权限',
+          '返回小程序，重新搜索打印机'
         ]
       },
       {
@@ -587,16 +597,31 @@ const brandData = {
       {
         code: null,
         codeLabel: '故障',
-        title: '搜索不到打印机',
-        summary: '检查 WiFi 连接，开启微信本地网络权限',
+        title: '扫描试卷失败 / 打印机繁忙',
+        summary: '小程序提示扫描失败或打印机繁忙，打印机屏幕一直转圈 loading',
         videoLabel: null,
         hasVideo: false,
-        precondition: '打印机和手机在同一个 WiFi，打印机网络指示灯正常',
+        phenomenon: '小程序提示"扫描失败"或"打印机繁忙"，打印机屏幕一直转圈 loading',
         steps: [
-          '打开手机设置',
-          '找到微信 → 打开本地网络权限',
-          '返回小程序，重新搜索打印机'
+          '打印机关机，等几秒再开机',
+          '小程序退出到首页',
+          '重新点击"智能批阅"，重新创建任务'
         ]
+      },
+      {
+        code: '5503',
+        codeLabel: '错误',
+        title: '后盖板异常',
+        summary: '查看后盖板是否打开，检查卡纸，关闭后盖板',
+        videoLabel: '01:15',
+        hasVideo: true,
+        steps: [
+          '查看打印机后盖板是否打开',
+          '检查里面是否有卡纸，有就轻轻拉出来',
+          '关闭后盖板'
+        ],
+        note: '若纸捏不出来或机器一直报警，可联系厂商处理',
+        contact: '400-088-8253（上海汉图，每日 8:00-20:00）'
       },
       {
         code: null,
@@ -751,7 +776,7 @@ function selectIssue(issueIdx) {
   document.getElementById('detailCode').style.display = 'inline';
   document.getElementById('detailTitle').textContent = issue.title;
 
-  // 更新视频区
+  // 更新媒体区：有视频则显示视频播放器，无视频则显示示意图占位
   const videoSection = document.getElementById('videoSection');
   if (issue.hasVideo) {
     videoSection.innerHTML = `
@@ -762,8 +787,9 @@ function selectIssue(issueIdx) {
     `;
   } else {
     videoSection.innerHTML = `
-      <div class="video-player video-player--empty">
-        <div class="video-player__placeholder">📹 视频上传中...</div>
+      <div class="image-placeholder">
+        <div class="image-placeholder__icon">🖼️</div>
+        <div class="image-placeholder__text">示意图</div>
       </div>
     `;
   }
