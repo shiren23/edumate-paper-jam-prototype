@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>故障排除手册</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+body {
+  background: var(--bg-page);
+  max-width: 720px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+/* 顶部导航 */
+.web-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  padding: 0 16px;
+  background: var(--bg-page);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.web-header__back {
+  width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  background: none; border: none;
+  font-size: 20px; color: var(--text-primary);
+  cursor: pointer; border-radius: 50%;
+}
+
+.web-header__title {
+  font-size: 18px; font-weight: 600;
+  position: absolute; left: 50%; transform: translateX(-50%);
+}
+
+/* 引导文案 */
+.page-intro {
+  margin: 16px 16px 0;
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* 分类选择页 */
+.brand-page { display: none; }
+.brand-page--active { display: block; }
+
+.brand-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 16px 16px 24px;
+}
+
+.brand-card {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  padding: 24px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.brand-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.brand-card__icon {
+  width: 56px; height: 56px;
+  border-radius: 16px;
+  background: var(--bg-page);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 12px;
+  font-size: 28px;
+}
+
+.brand-card__name {
+  font-size: 16px; font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.brand-card__desc {
+  font-size: 12px; color: var(--text-tertiary);
+}
+
+/* 问题列表页 */
+.issue-page { display: none; }
+.issue-page--active { display: block; }
+
+.brand-banner {
+  margin: 12px 16px 0;
+  background: white;
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.brand-banner__icon {
+  width: 40px; height: 40px;
+  border-radius: 12px;
+  background: var(--bg-page);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+}
+
+.brand-banner__name {
+  font-size: 15px; font-weight: 600;
+  color: var(--text-primary);
+}
+
+.brand-banner__desc {
+  font-size: 12px; color: var(--text-tertiary);
+  margin-top: 2px;
+}
+
+.issue-list {
+  margin: 12px 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.issue-item {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.issue-item:hover {
+  background: var(--bg-page);
+}
+
+.issue-item__title {
+  font-size: 15px; font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.4;
+  flex: 1;
+}
+
+.issue-item__arrow {
+  font-size: 18px;
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+/* 问题详情页 */
+.detail-page { display: none; }
+.detail-page--active { display: block; }
+
+.detail-header {
+  margin: 12px 16px 0;
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.detail-header__brand {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 10px;
+}
+
+.detail-header__badge {
+  font-size: 11px; color: #6366F1;
+  background: rgba(99,102,241,0.1);
+  padding: 2px 8px; border-radius: 6px;
+  font-weight: 600;
+}
+
+.detail-header__code {
+  font-size: 11px; color: var(--text-tertiary);
+  background: var(--bg-page);
+  padding: 2px 8px; border-radius: 6px;
+}
+
+.detail-header__title {
+  font-size: 17px; font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+/* 媒体区 */
+.media-section {
+  margin: 12px 16px 0;
+}
+
+.video-player {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: #1F2937;
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.video-player__play {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: rgba(99, 102, 241, 0.9);
+  color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.video-player__play:hover {
+  transform: scale(1.05);
+}
+
+.video-player__label {
+  position: absolute;
+  bottom: 10px; left: 12px;
+  font-size: 12px; color: rgba(255,255,255,0.85);
+  background: rgba(0,0,0,0.45);
+  padding: 3px 10px; border-radius: 6px;
+}
+
+.image-placeholder {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: var(--bg-page);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed var(--border);
+}
+
+.image-placeholder__icon {
+  font-size: 40px;
+  margin-bottom: 8px;
+}
+
+.image-placeholder__text {
+  font-size: 14px;
+  color: var(--text-tertiary);
+}
+
+/* 解法区 */
+.solution-section {
+  margin: 12px 16px 24px;
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.solution-section__title {
+  font-size: 15px; font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+
+.solution-section__title::before {
+  content: '';
+  width: 4px; height: 16px;
+  background: linear-gradient(180deg, #6366F1 0%, #8B5CF6 100%);
+  border-radius: 2px;
+}
+
+/* 有序步骤 */
+.steps-list {
+  list-style: none;
+  padding: 0; margin: 0;
+  counter-reset: step;
+}
+
+.steps-list li {
+  position: relative;
+  padding-left: 32px;
+  padding-bottom: 14px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.steps-list li:last-child {
+  padding-bottom: 0;
+}
+
+.steps-list li::before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 0; top: 2px;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+  color: white;
+  font-size: 12px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* 信息框 */
+.info-box {
+  margin-bottom: 14px;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.info-box:last-child {
+  margin-bottom: 0;
+}
+
+.info-box__label {
+  font-size: 12px; font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.info-box__text {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.info-box--phenomenon { background: rgba(245, 158, 11, 0.08); }
+.info-box--phenomenon .info-box__label { color: #D97706; }
+
+.info-box--precondition { background: rgba(59, 130, 246, 0.08); }
+.info-box--precondition .info-box__label { color: #2563EB; }
+
+.info-box--cause { background: rgba(239, 68, 68, 0.08); }
+.info-box--cause .info-box__label { color: #DC2626; }
+
+.info-box--note { background: rgba(99, 102, 241, 0.08); }
+.info-box--note .info-box__label { color: #6366F1; }
+
+.info-box--contact { background: rgba(16, 185, 129, 0.08); }
+.info-box--contact .info-box__label { color: #059669; }
+
+.info-box--reference { background: rgba(107, 114, 128, 0.08); }
+.info-box--reference .info-box__label { color: #4B5563; }
+
+.reference-link {
+  color: #6366F1;
+  text-decoration: underline;
+}
+</style>
+</head>
+<body>
+
+<!-- 顶部导航 -->
+<header class="web-header" id="webHeader">
+  <button class="web-header__back" onclick="goBack()">←</button>
+  <h1 class="web-header__title" id="pageTitle">故障排除手册</h1>
+  <div style="width:40px;"></div>
+</header>
+
+<!-- ========== 第一步：选择分类 ========== -->
+<div class="brand-page brand-page--active" id="brandPage">
+  <div class="page-intro">
+    请选择故障分类，查看对应的排障步骤与示意图。
+  </div>
+  <div class="brand-grid">
+    <div class="brand-card" onclick="selectBrand('hantu')">
+      <div class="brand-card__icon">🖨️</div>
+      <div class="brand-card__name">汉图打印机故障</div>
+      <div class="brand-card__desc">6 类常见问题</div>
+    </div>
+    <div class="brand-card" onclick="selectBrand('canon')">
+      <div class="brand-card__icon">🖨️</div>
+      <div class="brand-card__name">佳能打印机故障</div>
+      <div class="brand-card__desc">2 类常见问题</div>
+    </div>
+    <div class="brand-card" onclick="selectBrand('miniprogram')">
+      <div class="brand-card__icon">📱</div>
+      <div class="brand-card__name">小程序问题</div>
+      <div class="brand-card__desc">1 类常见问题</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 第二步：问题列表 ========== -->
+<div class="issue-page" id="issuePage">
+  <div class="brand-banner" id="brandBanner">
+    <div class="brand-banner__icon" id="bannerIcon">🖨️</div>
+    <div>
+      <div class="brand-banner__name" id="bannerName">汉图打印机故障</div>
+      <div class="brand-banner__desc" id="bannerDesc">6 类常见问题 · 请选择遇到的问题</div>
+    </div>
+  </div>
+  <div class="issue-list" id="issueList"></div>
+</div>
+
+<!-- ========== 第三步：问题详情 ========== -->
+<div class="detail-page" id="detailPage">
+  <div class="detail-header" id="detailHeader">
+    <div class="detail-header__brand">
+      <span class="detail-header__badge" id="detailBrand">汉图打印机故障</span>
+      <span class="detail-header__code" id="detailCode">错误代码 5407</span>
+    </div>
+    <div class="detail-header__title" id="detailTitle">卡纸</div>
+  </div>
+
+  <div class="media-section" id="mediaSection"></div>
+
+  <div class="solution-section">
+    <div class="solution-section__title">排障解法</div>
+    <div id="solutionContent"></div>
+  </div>
+</div>
+
+<script>
+const brandData = {
+  hantu: {
+    name: '汉图打印机故障',
+    desc: '6 类常见问题',
+    icon: '🖨️',
+    issues: [
+      {
+        code: null,
+        codeLabel: '故障',
+        title: '搜索不到打印机',
+        summary: '检查 WiFi 连接，开启微信本地网络权限',
+        videoLabel: null,
+        hasVideo: false,
+        precondition: '打印机和手机在同一个 WiFi，打印机网络指示灯正常',
+        steps: [
+          '打开手机设置',
+          '找到微信 → 打开本地网络权限',
+          '返回小程序，重新搜索打印机'
+        ]
+      },
+      {
+        code: '5407',
+        codeLabel: '错误',
+        title: '卡纸',
+        summary: '打开前后门，取出硒鼓和碳粉盒，检查并清理卡纸',
+        videoLabel: '02:30',
+        hasVideo: true,
+        steps: [
+          '打开打印机前门',
+          '打开打印机后门',
+          '把硒鼓和碳粉盒拿出来',
+          '仔细检查内部是否有卡纸或异物',
+          '清理干净后，装回硒鼓碳粉，关闭前后门'
+        ]
+      },
+      {
+        code: null,
+        codeLabel: '故障',
+        title: '留痕打印时卡纸（前门处）',
+        summary: '打开前盖板，抽出卡纸，关闭前盖板',
+        videoLabel: null,
+        hasVideo: false,
+        steps: [
+          '打开打印机前盖板',
+          '轻轻把卡住的纸张抽出来',
+          '关闭前盖板'
+        ]
+      },
+      {
+        code: null,
+        codeLabel: '故障',
+        title: '扫描试卷失败 / 打印机繁忙',
+        summary: '小程序提示扫描失败或打印机繁忙，打印机屏幕一直转圈 loading',
+        videoLabel: null,
+        hasVideo: false,
+        phenomenon: '小程序提示"扫描失败"或"打印机繁忙"，打印机屏幕一直转圈 loading',
+        steps: [
+          '打印机关机，等几秒再开机',
+          '小程序退出到首页',
+          '重新点击"智能批阅"，重新创建任务'
+        ]
+      },
+      {
+        code: '5503',
+        codeLabel: '错误',
+        title: '后盖板异常',
+        summary: '查看后盖板是否打开，检查卡纸，关闭后盖板',
+        videoLabel: '01:15',
+        hasVideo: true,
+        steps: [
+          '查看打印机后盖板是否打开',
+          '检查里面是否有卡纸，有就轻轻拉出来',
+          '关闭后盖板'
+        ],
+        note: '若纸捏不出来或机器一直报警，可联系厂商处理',
+        contact: '400-088-8253（上海汉图，每日 8:00-20:00）'
+      },
+      {
+        code: null,
+        codeLabel: '故障',
+        title: '连接打印机失败（硒鼓/墨粉报错）',
+        summary: '重新安装硒鼓，确保卡到位，查看报错是否消失',
+        videoLabel: null,
+        hasVideo: false,
+        phenomenon: '打印机显示墨粉或硒鼓异常',
+        steps: [
+          '打开打印机前盖板',
+          '把硒鼓拉出来',
+          '重新安装硒鼓，确保卡到位',
+          '关闭前盖板',
+          '查看屏幕上的墨粉/硒鼓报错是否消失',
+          '报错消失后，重新连接打印机'
+        ]
+      }
+    ]
+  },
+  canon: {
+    name: '佳能打印机故障',
+    desc: '2 类常见问题',
+    icon: '🖨️',
+    issues: [
+      {
+        code: null,
+        codeLabel: '故障',
+        title: '前盖板处卡纸',
+        summary: '打开前盖板，抽出卡纸，关闭前盖板',
+        videoLabel: '02:00',
+        hasVideo: true,
+        cause: '纸张放太多、纸张褶皱',
+        steps: [
+          '打开打印机前盖板',
+          '把卡住的纸张轻轻抽出来',
+          '关闭前盖板'
+        ],
+        reference: 'https://oip.manual.canon/USRMA-7188-zz-SSM-750-zhCN/contents/devu-trb-papers_jam.html'
+      },
+      {
+        code: null,
+        codeLabel: '故障',
+        title: '后盖板处卡纸',
+        summary: '打开后盖板，抽出卡纸，关闭后盖板',
+        videoLabel: '01:30',
+        hasVideo: true,
+        steps: [
+          '打开打印机后盖板',
+          '把卡住的纸张轻轻抽出来',
+          '关闭后盖板'
+        ]
+      }
+    ]
+  },
+  miniprogram: {
+    name: '小程序问题',
+    desc: '1 类常见问题',
+    icon: '📱',
+    issues: [
+      {
+        code: null,
+        codeLabel: '问题',
+        title: '智能批阅不显示班级',
+        summary: '回到首页，点击智能批阅按钮，登录后班级信息显示',
+        videoLabel: null,
+        hasVideo: false,
+        steps: [
+          '不要从其他入口进，先回到小程序首页',
+          '直接点击首页上的"智能批阅"按钮',
+          '弹出登录窗口后正常登录',
+          '再进入创建任务页面，班级信息就会显示'
+        ]
+      }
+    ]
+  }
+};
+
+let currentBrand = null;
+let currentIssue = null;
+let historyStack = ['brand'];
+
+function goBack() {
+  if (historyStack.length <= 1) {
+    window.location.href = 'index.html';
+    return;
+  }
+  historyStack.pop();
+  const prev = historyStack[historyStack.length - 1];
+  if (prev === 'brand') showBrandPage();
+  else if (prev === 'issue') showIssuePage();
+}
+
+function showPage(pageId) {
+  document.querySelectorAll('.brand-page, .issue-page, .detail-page').forEach(p => {
+    p.classList.remove('brand-page--active', 'issue-page--active', 'detail-page--active');
+  });
+  document.getElementById(pageId).classList.add(
+    pageId === 'brandPage' ? 'brand-page--active' :
+    pageId === 'issuePage' ? 'issue-page--active' : 'detail-page--active'
+  );
+}
+
+function selectBrand(brandKey) {
+  currentBrand = brandKey;
+  const brand = brandData[brandKey];
+
+  document.getElementById('bannerIcon').textContent = brand.icon;
+  document.getElementById('bannerName').textContent = brand.name;
+  document.getElementById('bannerDesc').textContent = brand.desc + ' · 请选择遇到的问题';
+
+  const listEl = document.getElementById('issueList');
+  listEl.innerHTML = brand.issues.map((issue, idx) => `
+    <div class="issue-item" onclick="selectIssue(${idx})">
+      <div class="issue-item__title">${issue.title}</div>
+      <div class="issue-item__arrow">›</div>
+    </div>
+  `).join('');
+
+  historyStack.push('issue');
+  showPage('issuePage');
+}
+
+function selectIssue(issueIdx) {
+  currentIssue = issueIdx;
+  const brand = brandData[currentBrand];
+  const issue = brand.issues[issueIdx];
+
+  document.getElementById('pageTitle').textContent = issue.title;
+  document.getElementById('detailBrand').textContent = brand.name;
+  document.getElementById('detailCode').textContent = issue.code ? `错误代码 ${issue.code}` : issue.codeLabel;
+  document.getElementById('detailCode').style.display = 'inline';
+  document.getElementById('detailTitle').textContent = issue.title;
+
+  const mediaSection = document.getElementById('mediaSection');
+  if (issue.hasVideo) {
+    mediaSection.innerHTML = `
+      <div class="video-player">
+        <div class="video-player__play">▶</div>
+        <div class="video-player__label">${issue.videoLabel || ''}</div>
+      </div>
+    `;
+  } else {
+    mediaSection.innerHTML = `
+      <div class="image-placeholder">
+        <div class="image-placeholder__icon">🖼️</div>
+        <div class="image-placeholder__text">示意图</div>
+      </div>
+    `;
+  }
+
+  let html = '';
+  if (issue.phenomenon) {
+    html += `<div class="info-box info-box--phenomenon"><div class="info-box__label">现象</div><div class="info-box__text">${issue.phenomenon}</div></div>`;
+  }
+  if (issue.precondition) {
+    html += `<div class="info-box info-box--precondition"><div class="info-box__label">前提</div><div class="info-box__text">${issue.precondition}</div></div>`;
+  }
+  if (issue.cause) {
+    html += `<div class="info-box info-box--cause"><div class="info-box__label">原因</div><div class="info-box__text">${issue.cause}</div></div>`;
+  }
+  if (issue.steps && issue.steps.length > 0) {
+    html += `<ol class="steps-list">${issue.steps.map(s => `<li>${s}</li>`).join('')}</ol>`;
+  }
+  if (issue.note) {
+    html += `<div class="info-box info-box--note"><div class="info-box__label">备注</div><div class="info-box__text">${issue.note}</div></div>`;
+  }
+  if (issue.contact) {
+    html += `<div class="info-box info-box--contact"><div class="info-box__label">厂商联系方式</div><div class="info-box__text">${issue.contact}</div></div>`;
+  }
+  if (issue.reference) {
+    html += `<div class="info-box info-box--reference"><div class="info-box__label">参考</div><div class="info-box__text"><a href="${issue.reference}" target="_blank" class="reference-link">佳能官方卡纸修复指南</a></div></div>`;
+  }
+
+  document.getElementById('solutionContent').innerHTML = html;
+
+  historyStack.push('detail');
+  showPage('detailPage');
+}
+
+function showBrandPage() {
+  document.getElementById('pageTitle').textContent = '故障排除手册';
+  showPage('brandPage');
+}
+
+function showIssuePage() {
+  showPage('issuePage');
+}
+</script>
+
+</body>
+</html>
