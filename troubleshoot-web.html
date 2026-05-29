@@ -135,31 +135,6 @@ body {
   padding: 0 18px 18px;
 }
 
-/* 问题详情头部信息 */
-.detail-meta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
-}
-
-.detail-meta__badge {
-  font-size: 11px;
-  color: #6366F1;
-  background: rgba(99,102,241,0.1);
-  padding: 2px 8px;
-  border-radius: 6px;
-  font-weight: 600;
-}
-
-.detail-meta__code {
-  font-size: 11px;
-  color: var(--text-tertiary);
-  background: var(--bg-page);
-  padding: 2px 8px;
-  border-radius: 6px;
-}
-
 /* 媒体区 */
 .media-section {
   margin-bottom: 14px;
@@ -528,10 +503,6 @@ const brandData = {
 };
 
 function renderIssue(issue, brandName) {
-  const codeHtml = issue.code
-    ? `<span class="detail-meta__code">错误代码 ${issue.code}</span>`
-    : `<span class="detail-meta__code">${issue.codeLabel}</span>`;
-
   const mediaHtml = issue.hasVideo
     ? `<div class="video-player"><div class="video-player__play">▶</div></div>`
     : `<div class="image-placeholder"><div class="image-placeholder__icon">🖼️</div><div class="image-placeholder__text">示意图</div></div>`;
@@ -567,10 +538,6 @@ function renderIssue(issue, brandName) {
       </div>
       <div class="qa-item__body" id="body-${issue.id}">
         <div class="qa-item__content">
-          <div class="detail-meta">
-            <span class="detail-meta__badge">${brandName}</span>
-            ${codeHtml}
-          </div>
           <div class="media-section">${mediaHtml}</div>
           <div class="solution-title">排障解法</div>
           ${solutionHtml}
