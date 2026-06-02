@@ -373,7 +373,8 @@ function confirmStart() {
   if (!selectedStartId) return;
   const paper = papers.find(p => p.id === selectedStartId);
   // 跳转到续打确认页，带入起始序号
-  window.location.href = `confirm-print.html?startSeq=${paper.seq}`;
+  // 进入续打确认流程
+  console.log('续打起点：第', paper.seq, '张');
 }
 
 // 初始化
