@@ -372,9 +372,8 @@ function updateBottomButton() {
 function confirmStart() {
   if (!selectedStartId) return;
   const paper = papers.find(p => p.id === selectedStartId);
-  // 跳转到续打确认页，带入起始序号
-  // 进入续打确认流程
-  console.log('续打起点：第', paper.seq, '张');
+  // 进入系统打印界面，从第 paper.seq 张开始续打
+  alert(`已选择从第 ${paper.seq} 张（${paper.name}）开始打印，即将进入打印界面。`);
 }
 
 // 初始化

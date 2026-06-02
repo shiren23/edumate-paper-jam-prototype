@@ -121,7 +121,7 @@ body {
   <div class="card">
     <div class="card__icon">✓</div>
     <div class="card__title">2. 重匹配界面</div>
-    <div class="card__desc">核心页面。教师勾选被卡纸的试卷，系统自动选中之后的所有试卷，支持全选/取消和底部续打摘要。</div>
+    <div class="card__desc">核心页面。以缩略图网格展示所有已扫描试卷，点击放大查看，选择从哪张试卷开始继续打印。</div>
     <a class="card__link" href="rematch.html" target="_blank">打开预览 →</a>
   </div>
 
@@ -137,11 +137,9 @@ body {
   <h2>📋 页面流程说明</h2>
   <ol>
     <li><strong>打印中</strong> → 打印机卡纸 → 系统报错并中断当前任务</li>
-    <li><strong>卡纸提示页面</strong> → 弹窗询问"是否打印后续试卷？"</li>
-    <li>若选"否" → <strong>打印完成页面（结束状态）</strong> → 提示取出剩余试卷</li>
-    <li>若选"是" → <strong>重匹配界面</strong> → 勾选被卡纸试卷 → 点击"下一步"</li>
-    <li><strong>续打确认页面</strong> → 确认打印范围 → 点击"开始打印"</li>
-    <li>回到打印流程 → 完成后 → <strong>打印完成页面（成功状态）</strong></li>
+    <li><strong>卡纸提示页面</strong> → 引导清理步骤 → 点击"我已清理"</li>
+    <li><strong>重匹配界面</strong> → 点击试卷放大查看，选择从哪张开始继续打印 → 点击"开始打印"</li>
+    <li>直接进入系统<strong>打印界面</strong>，继续完成打印任务</li>
   </ol>
 </div>
 
