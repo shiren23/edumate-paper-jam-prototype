@@ -66,34 +66,6 @@
   line-height: 1.4;
 }
 
-/* 状态标签（右下角） */
-.paper-thumb__status {
-  position: absolute;
-  bottom: 6px;
-  right: 6px;
-  font-size: 10px;
-  font-weight: 600;
-  padding: 2px 6px;
-  border-radius: 6px;
-  z-index: 10;
-  line-height: 1.4;
-}
-
-.paper-thumb__status--printed {
-  background: #DCFCE7;
-  color: #16A34A;
-}
-
-.paper-thumb__status--jammed {
-  background: #FEE2E2;
-  color: #DC2626;
-}
-
-.paper-thumb__status--pending {
-  background: #E0E7FF;
-  color: var(--primary);
-}
-
 /* 缩略图图片区域 */
 .paper-thumb__image {
   width: 100%;
@@ -325,23 +297,15 @@ const papers = [
 let selectedStartId = null;
 let previewIndex = 0;
 
-function getStatusInfo(paper) {
-  if (paper.jammed) return { text: '卡纸', className: 'paper-thumb__status--jammed' };
-  if (paper.printed) return { text: '已打印', className: 'paper-thumb__status--printed' };
-  return { text: '待打印', className: 'paper-thumb__status--pending' };
-}
-
 function renderGrid() {
   const grid = document.getElementById('paperGrid');
   grid.innerHTML = papers.map((p, idx) => {
-    const status = getStatusInfo(p);
     const isSelected = selectedStartId === p.id;
     return `
       <div class="paper-thumb ${isSelected ? 'paper-thumb--selected' : ''}" 
            onclick="openPreview(${idx})" data-id="${p.id}">
         <span class="paper-thumb__seq">${p.seq}</span>
         <div class="paper-thumb__image">📄</div>
-        <span class="paper-thumb__status ${status.className}">${status.text}</span>
         ${isSelected ? '<span class="paper-thumb__check">✓</span>' : ''}
       </div>
     `;
