@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>重匹配 - 选择卡纸试卷</title>
+<title>重匹配 - 选择续打起点</title>
 <link rel="stylesheet" href="styles.css">
 <style>
 /* ===== 提示横幅 ===== */
 .rematch-banner {
   margin: 0 16px 12px;
   padding: 12px 14px;
-  background: var(--warning-light);
-  border: 1px solid #FCD34D;
+  background: var(--primary-fade);
+  border: 1px solid #C7D2FE;
   border-radius: 12px;
   display: flex;
   gap: 10px;
@@ -21,226 +21,236 @@
 .rematch-banner__title { font-size: 14px; font-weight: 600; color: var(--text-primary); }
 .rematch-banner__desc { font-size: 12px; color: var(--text-secondary); margin-top: 3px; line-height: 1.5; }
 
-/* ===== 试卷展示区 ===== */
-.paper-viewer {
-  position: relative;
+/* ===== 试卷缩略图网格 ===== */
+.paper-grid {
   padding: 0 16px;
-  margin-top: 8px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding-bottom: 120px; /* 为底部按钮留空间 */
 }
 
-.paper-card {
-  background: white;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+.paper-thumb {
   position: relative;
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 2px solid transparent;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* 左上角页码跳转标签 */
-.paper-card__seq {
+.paper-thumb:active {
+  transform: scale(0.96);
+}
+
+.paper-thumb--selected {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.15), 0 2px 8px rgba(0,0,0,0.06);
+}
+
+/* 左上角序号角标 */
+.paper-thumb__seq {
   position: absolute;
-  top: 12px;
-  left: 12px;
+  top: 6px;
+  left: 6px;
   z-index: 10;
   background: var(--primary);
   color: white;
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 700;
-  padding: 4px 8px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  gap: 2px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  line-height: 1.4;
 }
 
-.paper-card__seq input {
-  width: 28px;
-  background: transparent;
-  border: none;
-  color: white;
-  font-size: 13px;
-  font-weight: 700;
-  text-align: right;
-  padding: 0;
-  outline: none;
-  -moz-appearance: textfield;
-}
-
-.paper-card__seq input::-webkit-outer-spin-button,
-.paper-card__seq input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-.paper-card__seq input::selection {
-  background: rgba(255,255,255,0.3);
-}
-
-/* 右上角红色勾选圆点 */
-.paper-card__check {
+/* 状态标签（右下角） */
+.paper-thumb__status {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  bottom: 6px;
+  right: 6px;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 6px;
   z-index: 10;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: white;
-  border: 2px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  color: transparent;
-  cursor: pointer;
-  transition: all 0.15s;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  line-height: 1.4;
 }
 
-.paper-card__check--checked {
-  background: var(--danger);
-  border-color: var(--danger);
-  color: white;
+.paper-thumb__status--printed {
+  background: #DCFCE7;
+  color: #16A34A;
 }
 
-.paper-card__check:active {
-  transform: scale(0.92);
+.paper-thumb__status--jammed {
+  background: #FEE2E2;
+  color: #DC2626;
 }
 
-/* 试卷图片区域 */
-.paper-card__image {
+.paper-thumb__status--pending {
+  background: #E0E7FF;
+  color: var(--primary);
+}
+
+/* 缩略图图片区域 */
+.paper-thumb__image {
   width: 100%;
   aspect-ratio: 3/4;
   background: var(--bg-page);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 80px;
-  position: relative;
+  font-size: 36px;
 }
 
-.paper-card__image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+/* 选中标记（右上角勾） */
+.paper-thumb__check {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 10;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.2s ease;
 }
 
-/* 学生信息 */
-.paper-card__info {
-  padding: 14px 16px;
+.paper-thumb--selected .paper-thumb__check {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* ===== 放大查看浮层 ===== */
+.preview-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.88);
+  z-index: 1000;
+  display: none;
+  flex-direction: column;
+}
+
+.preview-overlay.active {
+  display: flex;
+}
+
+.preview-overlay__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-top: 1px solid var(--border);
+  padding: 12px 16px;
+  color: white;
+  flex-shrink: 0;
 }
 
-.paper-card__name {
+.preview-overlay__title {
   font-size: 16px;
   font-weight: 600;
-  color: var(--text-primary);
 }
 
-.paper-card__detail {
-  font-size: 13px;
-  color: var(--text-secondary);
-  margin-top: 2px;
-}
-
-/* 左右翻页箭头 */
-.paper-nav {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 40px;
-  height: 40px;
+.preview-overlay__close {
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background: rgba(0,0,0,0.4);
-  color: white;
+  background: rgba(255,255,255,0.15);
   border: none;
+  color: white;
   font-size: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 20;
   -webkit-tap-highlight-color: transparent;
 }
 
-.paper-nav:active { background: rgba(0,0,0,0.6); }
-
-.paper-nav--prev { left: 4px; }
-.paper-nav--next { right: 4px; }
-
-.paper-nav:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
+.preview-overlay__close:active {
+  background: rgba(255,255,255,0.25);
 }
 
-/* 底部摘要 */
-.bottom-summary-bar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px 16px;
-  margin: 12px 16px 0;
-  background: var(--primary-fade);
-  border-radius: 12px;
-  font-size: 13px;
-  color: var(--primary);
-}
-
-.bottom-summary-bar strong {
-  font-weight: 600;
-}
-
-/* 已选中试卷缩略图条 */
-.selected-strip {
-  display: flex;
-  gap: 8px;
-  padding: 12px 16px;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-
-.selected-strip::-webkit-scrollbar { display: none; }
-
-.selected-thumb {
-  width: 48px;
-  height: 64px;
-  border-radius: 8px;
-  background: var(--bg-page);
-  border: 2px solid var(--danger);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  flex-shrink: 0;
-  position: relative;
-}
-
-.selected-thumb__seq {
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--danger);
-  background: white;
-  border-radius: 4px;
-  padding: 0 4px;
-}
-
-/* 底部按钮组 */
-.bottom-actions--split {
-  display: flex;
-  gap: 12px;
-  padding: 12px 16px 24px;
-}
-
-.bottom-actions--split .btn {
+.preview-overlay__body {
   flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  overflow: auto;
+}
+
+.preview-overlay__placeholder {
+  width: 85vw;
+  height: 55vh;
+  background: #f8f9fa;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 100px;
+}
+
+/* 浮层底部信息 */
+.preview-overlay__info {
+  padding: 8px 16px 12px;
+  color: white;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.preview-overlay__name {
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.preview-overlay__detail {
+  font-size: 13px;
+  opacity: 0.75;
+}
+
+/* 浮层底部按钮 */
+.preview-overlay__footer {
+  padding: 0 16px 24px;
+  flex-shrink: 0;
+}
+
+.preview-overlay__footer .btn {
+  width: 100%;
+}
+
+/* ===== 底部固定按钮 ===== */
+.bottom-actions--fixed {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 375px;
+  padding: 12px 16px 24px;
+  background: white;
+  border-top: 1px solid var(--border);
+  z-index: 100;
+}
+
+.bottom-actions--fixed .btn {
+  width: 100%;
+}
+
+.bottom-actions__hint {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
 }
 </style>
 </head>
@@ -264,50 +274,36 @@
   <div class="rematch-banner">
     <span class="rematch-banner__icon">💡</span>
     <div>
-      <div class="rematch-banner__title">请勾选被卡纸的试卷</div>
-      <div class="rematch-banner__desc">点击右上角红色圆点勾选被卡住的试卷</div>
+      <div class="rematch-banner__title">请选择续打起始试卷</div>
+      <div class="rematch-banner__desc">点击试卷可放大查看，确认后点击「从此试卷开始打印」</div>
     </div>
   </div>
 
-  <!-- 试卷展示区 -->
-  <div class="paper-viewer">
-    <div class="paper-card" id="paperCard" onclick="toggleCurrent()">
-      <!-- 左上角页码跳转 -->
-      <div class="paper-card__seq">
-        <input id="cardSeqInput" type="number" min="1" max="10" value="1" onkeydown="onSeqInputKey(event)" onblur="onSeqInputBlur()">
-        <span id="cardSeqTotal">/ 10</span>
-      </div>
-      <!-- 右上角红色勾选 -->
-      <div class="paper-card__check" id="cardCheck">✓</div>
-      <!-- 试卷图片 -->
-      <div class="paper-card__image" id="cardImage">📄</div>
-      <!-- 学生信息 -->
-      <div class="paper-card__info">
-        <div>
-          <div class="paper-card__name" id="cardName">林晓雨</div>
-          <div class="paper-card__detail" id="cardDetail">学号：250501</div>
-        </div>
-        <div id="cardTag"><span class="tag tag--success">已打印</span></div>
-      </div>
-    </div>
+  <!-- 试卷缩略图网格 -->
+  <div class="paper-grid" id="paperGrid"></div>
 
-    <!-- 左右翻页 -->
-    <button class="paper-nav paper-nav--prev" id="prevBtn" onclick="prevPaper()">‹</button>
-    <button class="paper-nav paper-nav--next" id="nextBtn" onclick="nextPaper()">›</button>
+  <!-- 底部固定按钮 -->
+  <div class="bottom-actions bottom-actions--fixed">
+    <div class="bottom-actions__hint" id="bottomHint">请点击上方试卷放大查看后选择</div>
+    <button class="btn btn--primary" id="confirmBtn" disabled onclick="confirmStart()">从此试卷开始打印</button>
   </div>
+</div>
 
-  <!-- 选中摘要 -->
-  <div class="bottom-summary-bar" id="summaryBar">
-    已勾选 <strong id="selectedNum">0</strong> 张被卡纸试卷
+<!-- 放大查看浮层 -->
+<div class="preview-overlay" id="previewOverlay" onclick="onOverlayClick(event)">
+  <div class="preview-overlay__header">
+    <span class="preview-overlay__title" id="previewTitle">试卷预览</span>
+    <button class="preview-overlay__close" onclick="closePreview()">✕</button>
   </div>
-
-  <!-- 已选中缩略图条 -->
-  <div class="selected-strip" id="selectedStrip"></div>
-
-  <!-- 底部操作 -->
-  <div class="bottom-actions bottom-actions--split">
-    <button class="btn btn--secondary" onclick="toggleCurrent()">勾选当前试卷</button>
-    <button class="btn btn--primary" id="nextStepBtn" disabled onclick="goToConfirm()">下一步</button>
+  <div class="preview-overlay__body" onclick="event.stopPropagation()">
+    <div class="preview-overlay__placeholder" id="previewImage">📄</div>
+  </div>
+  <div class="preview-overlay__info">
+    <div class="preview-overlay__name" id="previewName">--</div>
+    <div class="preview-overlay__detail" id="previewDetail">--</div>
+  </div>
+  <div class="preview-overlay__footer">
+    <button class="btn btn--primary" onclick="selectFromThis()">从此试卷开始打印</button>
   </div>
 </div>
 
@@ -326,157 +322,94 @@ const papers = [
   { id: 10, seq: 10, name: "吴俊杰", studentNo: "250510", printed: false, jammed: false },
 ];
 
-let currentIndex = 0;
-let selectedIds = new Set();
+let selectedStartId = null;
+let previewIndex = 0;
 
-// 自动勾选被卡纸的试卷及之后的所有
-function autoSelectAfterJam() {
-  const jamIndex = papers.findIndex(p => p.jammed);
-  if (jamIndex >= 0) {
-    currentIndex = jamIndex;
-    for (let i = jamIndex; i < papers.length; i++) {
-      selectedIds.add(papers[i].id);
-    }
-  }
-  renderCard();
-  updateSummary();
+function getStatusInfo(paper) {
+  if (paper.jammed) return { text: '卡纸', className: 'paper-thumb__status--jammed' };
+  if (paper.printed) return { text: '已打印', className: 'paper-thumb__status--printed' };
+  return { text: '待打印', className: 'paper-thumb__status--pending' };
 }
 
-function renderCard() {
-  const paper = papers[currentIndex];
-  const isChecked = selectedIds.has(paper.id);
-
-  document.getElementById('cardName').textContent = paper.name;
-  document.getElementById('cardDetail').textContent = `学号：${paper.studentNo}`;
-
-  const checkEl = document.getElementById('cardCheck');
-  if (isChecked) {
-    checkEl.classList.add('paper-card__check--checked');
-  } else {
-    checkEl.classList.remove('paper-card__check--checked');
-  }
-
-  // 状态标签
-  let tagHtml = '';
-  if (paper.printed) {
-    tagHtml = '<span class="tag tag--success">已打印</span>';
-  } else if (paper.jammed) {
-    tagHtml = '<span class="tag tag--danger">卡纸</span>';
-  } else {
-    tagHtml = '<span class="tag tag--primary">待打印</span>';
-  }
-  document.getElementById('cardTag').innerHTML = tagHtml;
-
-  // 左上角页码输入框
-  const seqInput = document.getElementById('cardSeqInput');
-  seqInput.value = paper.seq;
-  seqInput.max = papers.length;
-  document.getElementById('cardSeqTotal').textContent = '/ ' + papers.length;
-
-  // 翻页按钮状态
-  document.getElementById('prevBtn').disabled = currentIndex === 0;
-  document.getElementById('nextBtn').disabled = currentIndex === papers.length - 1;
-}
-
-function toggleCurrent() {
-  const paper = papers[currentIndex];
-  if (selectedIds.has(paper.id)) {
-    selectedIds.delete(paper.id);
-  } else {
-    selectedIds.add(paper.id);
-  }
-  renderCard();
-  updateSummary();
-}
-
-function prevPaper() {
-  if (currentIndex > 0) {
-    currentIndex--;
-    renderCard();
-  }
-}
-
-function nextPaper() {
-  if (currentIndex < papers.length - 1) {
-    currentIndex++;
-    renderCard();
-  }
-}
-
-function updateSummary() {
-  const selectedCount = selectedIds.size;
-  document.getElementById('selectedNum').textContent = selectedCount;
-
-  const nextBtn = document.getElementById('nextStepBtn');
-  nextBtn.disabled = selectedCount === 0;
-
-  // 更新缩略图条
-  const strip = document.getElementById('selectedStrip');
-  const selectedPapers = papers.filter(p => selectedIds.has(p.id));
-  if (selectedPapers.length === 0) {
-    strip.innerHTML = '';
-    strip.style.display = 'none';
-  } else {
-    strip.style.display = 'flex';
-    strip.innerHTML = selectedPapers.map(p => `
-      <div class="selected-thumb">
-        <span class="selected-thumb__seq">${p.seq}</span>
-        📄
+function renderGrid() {
+  const grid = document.getElementById('paperGrid');
+  grid.innerHTML = papers.map((p, idx) => {
+    const status = getStatusInfo(p);
+    const isSelected = selectedStartId === p.id;
+    return `
+      <div class="paper-thumb ${isSelected ? 'paper-thumb--selected' : ''}" 
+           onclick="openPreview(${idx})" data-id="${p.id}">
+        <span class="paper-thumb__seq">${p.seq}</span>
+        <div class="paper-thumb__image">📄</div>
+        <span class="paper-thumb__status ${status.className}">${status.text}</span>
+        ${isSelected ? '<span class="paper-thumb__check">✓</span>' : ''}
       </div>
-    `).join('');
+    `;
+  }).join('');
+}
+
+function openPreview(index) {
+  previewIndex = index;
+  const paper = papers[index];
+  
+  document.getElementById('previewTitle').textContent = `第 ${paper.seq} 张`;
+  document.getElementById('previewName').textContent = paper.name;
+  
+  let detailText = `学号：${paper.studentNo}`;
+  if (paper.jammed) detailText += ' · 卡纸，需重新打印';
+  else if (paper.printed) detailText += ' · 已打印';
+  else detailText += ' · 待打印';
+  document.getElementById('previewDetail').textContent = detailText;
+  
+  document.getElementById('previewOverlay').classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+
+function closePreview() {
+  document.getElementById('previewOverlay').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+function onOverlayClick(event) {
+  if (event.target === document.getElementById('previewOverlay')) {
+    closePreview();
   }
 }
 
-function goToConfirm() {
-  window.location.href = 'confirm-print.html';
+function selectFromThis() {
+  const paper = papers[previewIndex];
+  selectedStartId = paper.id;
+  closePreview();
+  renderGrid();
+  updateBottomButton();
 }
 
-function onSeqInputKey(e) {
-  if (e.key === 'Enter') {
-    onSeqInputBlur();
+function updateBottomButton() {
+  const btn = document.getElementById('confirmBtn');
+  const hint = document.getElementById('bottomHint');
+  
+  if (selectedStartId) {
+    const paper = papers.find(p => p.id === selectedStartId);
+    btn.disabled = false;
+    hint.textContent = `已选择：第 ${paper.seq} 张 · ${paper.name}，将从该试卷开始续打`;
+    hint.style.color = 'var(--primary)';
+  } else {
+    btn.disabled = true;
+    hint.textContent = '请点击上方试卷放大查看后选择';
+    hint.style.color = 'var(--text-secondary)';
   }
 }
 
-function onSeqInputBlur() {
-  const inputEl = document.getElementById('cardSeqInput');
-  let val = parseInt(inputEl.value, 10);
-  if (isNaN(val)) {
-    inputEl.value = papers[currentIndex].seq;
-    return;
-  }
-  val = Math.max(1, Math.min(papers.length, val));
-  inputEl.value = val;
-  currentIndex = papers.findIndex(p => p.seq === val);
-  if (currentIndex < 0) currentIndex = val - 1;
-  renderCard();
+function confirmStart() {
+  if (!selectedStartId) return;
+  const paper = papers.find(p => p.id === selectedStartId);
+  // 跳转到续打确认页，带入起始序号
+  window.location.href = `confirm-print.html?startSeq=${paper.seq}`;
 }
-
-// 键盘支持
- document.addEventListener('keydown', (e) => {
-  if (e.key === 'ArrowLeft') prevPaper();
-  if (e.key === 'ArrowRight') nextPaper();
-  if (e.key === ' ' || e.key === 'Enter') {
-    e.preventDefault();
-    toggleCurrent();
-  }
-});
-
-// 触摸滑动支持
-let touchStartX = 0;
-const card = document.getElementById('paperCard');
-card.addEventListener('touchstart', (e) => {
-  touchStartX = e.touches[0].clientX;
-});
-card.addEventListener('touchend', (e) => {
-  const diff = touchStartX - e.changedTouches[0].clientX;
-  if (Math.abs(diff) > 50) {
-    if (diff > 0) nextPaper();
-    else prevPaper();
-  }
-});
 
 // 初始化
-autoSelectAfterJam();
+renderGrid();
+updateBottomButton();
 </script>
 
 </body>
