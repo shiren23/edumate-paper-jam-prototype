@@ -316,6 +316,11 @@ function openPreview(index) {
   previewIndex = index;
   const paper = papers[index];
   
+  // 点击即选中该试卷
+  selectedStartId = paper.id;
+  renderGrid();
+  updateBottomButton();
+  
   document.getElementById('previewTitle').textContent = `第 ${paper.seq} 张`;
   document.getElementById('previewName').textContent = paper.name;
   
