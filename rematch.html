@@ -324,11 +324,7 @@ function openPreview(index) {
   document.getElementById('previewTitle').textContent = `第 ${paper.seq} 张`;
   document.getElementById('previewName').textContent = paper.name;
   
-  let detailText = `学号：${paper.studentNo}`;
-  if (paper.jammed) detailText += ' · 卡纸，需重新打印';
-  else if (paper.printed) detailText += ' · 已打印';
-  else detailText += ' · 待打印';
-  document.getElementById('previewDetail').textContent = detailText;
+  document.getElementById('previewDetail').textContent = `学号：${paper.studentNo}`;
   
   document.getElementById('previewOverlay').classList.add('active');
   document.body.style.overflow = 'hidden';
